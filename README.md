@@ -197,5 +197,6 @@ El recorrido de la sección 13 (publicar, solicitar, aceptar, pagar, completar, 
 - **Reputación.** Se recalcula por evento (`ReputacionObserver`) fuera de la transacción de calificar, y no puede editarse manualmente.
 - **Promociones.** El dominio y el cálculo de precio están probados (`PromocionDecoratorTest`), pero ningún controller crea promociones: no hay pantalla ni caso de uso que las cargue.
 - **Notificaciones.** Los proveedores de email y push son mocks que escriben en consola; la bandeja interna sí se persiste.
+- **HTML sin escapar en la vista del kit.** `ui/SkillSwapView.java` (código de la cátedra, sin modificar) arma etiquetas `<html>…` concatenando `titulo`, `descripcion` y `bio` sin escapar. Un texto con HTML se interpreta en el `JLabel` (por ejemplo, un `<img src="http://…">` haría un pedido de red al mostrarse) o rompe el formato de la pantalla. Swing no ejecuta scripts. No se corrigió para mantener el kit tal cual vino; la corrección sería escapar `& < >` en `Conversor` o en la vista.
 - **Identidad.** `IdentityClientMock` conoce solo a los usuarios de la demostración; no hay login real (fuera de alcance).
 - **Datos de demostración.** Son reproducibles (ids y fechas fijos, `V2__datos_demo.sql`). Algunos textos fijos de la ventana del kit (por ejemplo el recuento de proyectos del encabezado) no vienen de la base.
