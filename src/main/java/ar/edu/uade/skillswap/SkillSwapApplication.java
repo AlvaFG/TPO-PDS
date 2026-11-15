@@ -69,9 +69,11 @@ public final class SkillSwapApplication {
 
     /* La vista del kit no captura excepciones: los errores de aplicacion se muestran en un dialogo. */
     private static void mostrarErroresEnVentana() {
-        Thread.setDefaultUncaughtExceptionHandler((hilo, error) ->
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, error.getMessage(),
-                        "SkillSwap", JOptionPane.WARNING_MESSAGE)));
+        Thread.setDefaultUncaughtExceptionHandler((hilo, error) -> {
+            error.printStackTrace();
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, error.getMessage(),
+                        "SkillSwap", JOptionPane.WARNING_MESSAGE));
+        });
     }
 
     /* Composition Root del modo real: repositorios JPA, adaptadores mock de identidad y canales. */
