@@ -1,0 +1,32 @@
+# MySQL 8 local para SkillSwap.
+#
+#   docker compose up -d      # levanta la base (el esquema y los datos los carga Flyway al iniciar la app)
+#   docker compose down -v    # la baja y borra el volumen (la proxima vez Flyway vuelve a cargar todo)
+#
+# Conexion (la misma que usa PersistenceFactory.crear() y persistence.xml):
+#   URL:     jdbc:mysql://localhost:3306/skillswap?serverTimezone=UTC
+#   Usuario: skillswap
+#   Clave:   skillswap
+# Se puede apuntar a otra base con SKILLSWAP_DB_URL, SKILLSWAP_DB_USER y SKILLSWAP_DB_PASSWORD.
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: skillswap-mysql
+    environment:
+      MYSQL_DATABASE: skillswap
+      MYSQL_USER: skillswap
+      MYSQL_PASSWORD: skillswap
+      MYSQL_ROOT_PASSWORD: root
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
+    ports:
+      - "3306:3306"
+    volumes:
+      - skillswap-datos:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uskillswap", "-pskillswap"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  skillswap-datos:

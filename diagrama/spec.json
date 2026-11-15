@@ -1,0 +1,8779 @@
+{
+ "proyecto": "SkillSwap",
+ "diagrama": "Main",
+ "clases": [
+  {
+   "nombre": "ErrorDeAplicacion",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [],
+   "documentacion": "Extiende RuntimeException. Es lo unico que ve la UI: lleva un mensaje legible en lugar de las excepciones de dominio, de aplicacion o de JPA."
+  },
+  {
+   "nombre": "EjecutorDeAcciones",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "identidad",
+     "tipo": "IServicioIdentidad"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "ejecutar",
+     "retorno": "T",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "accion",
+       "tipo": "Supplier<T>"
+      }
+     ]
+    },
+    {
+     "nombre": "ejecutar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "accion",
+       "tipo": "Runnable"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Valida el userId contra el servicio de identidad, ejecuta la accion y traduce las excepciones de dominio, de aplicacion y el conflicto de concurrencia a ErrorDeAplicacion. Evita repetir try/catch en cada controller."
+  },
+  {
+   "nombre": "Models",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [],
+   "documentacion": "Registros de la Mock UI Kit que la UI conoce (Perfil, Publicacion, Contratacion, Movimiento, Notificacion, FiltrosBusqueda y sus enumeraciones). Se mantienen tal como los entrego la catedra."
+  },
+  {
+   "nombre": "Conversor",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "id",
+     "retorno": "Long",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "String"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "entero",
+     "retorno": "int",
+     "parametros": [
+      {
+       "nombre": "valor",
+       "tipo": "long"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "publicacion",
+     "retorno": "Models.Publicacion",
+     "parametros": [
+      {
+       "nombre": "d",
+       "tipo": "PublicacionDto"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "contratacion",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "d",
+       "tipo": "ContratacionDto"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "notificacion",
+     "retorno": "Models.Notificacion",
+     "parametros": [
+      {
+       "nombre": "d",
+       "tipo": "NotificacionDto"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "movimientos",
+     "retorno": "List<Models.Movimiento>",
+     "parametros": [
+      {
+       "nombre": "billetera",
+       "tipo": "BilleteraDto"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "perfil",
+     "retorno": "Models.Perfil",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "d",
+       "tipo": "PerfilPublicoDto"
+      }
+     ],
+     "estatico": true
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Traduce los DTO de aplicacion a los registros de la UI y los ids String a Long."
+  },
+  {
+   "nombre": "ModalidadUi",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "aDominio",
+     "retorno": "Modalidad",
+     "parametros": [
+      {
+       "nombre": "modalidad",
+       "tipo": "Models.Modalidad"
+      }
+     ],
+     "estatico": true
+    }
+   ],
+   "documentacion": "HIBRIDA existe en la UI pero no en el dominio (consigna 4.2): se rechaza con un error legible."
+  },
+  {
+   "nombre": "BusquedaController",
+   "paquete": "Presentation",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "buscar",
+     "retorno": "List<Models.Publicacion>",
+     "parametros": [
+      {
+       "nombre": "filtros",
+       "tipo": "Models.FiltrosBusqueda"
+      }
+     ]
+    },
+    {
+     "nombre": "recomendar",
+     "retorno": "List<Models.Publicacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "categorias",
+     "retorno": "List<String>",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Contrato de la Mock UI Kit para el modulo Busqueda: la UI solo conoce esta interfaz."
+  },
+  {
+   "nombre": "BusquedaControllerImpl",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "busqueda",
+     "tipo": "IBusquedaService"
+    },
+    {
+     "nombre": "recomendacion",
+     "tipo": "IRecomendacionService"
+    },
+    {
+     "nombre": "ejecutor",
+     "tipo": "EjecutorDeAcciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "buscar",
+     "retorno": "List<Models.Publicacion>",
+     "parametros": [
+      {
+       "nombre": "filtros",
+       "tipo": "Models.FiltrosBusqueda"
+      }
+     ]
+    },
+    {
+     "nombre": "recomendar",
+     "retorno": "List<Models.Publicacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "categorias",
+     "retorno": "List<String>",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "GRASP Controller",
+   "documentacion": "Controller delgado: delega en los casos de uso a traves de EjecutorDeAcciones y convierte el resultado a los registros de la UI. Sin SQL ni reglas de negocio."
+  },
+  {
+   "nombre": "PublicacionController",
+   "paquete": "Presentation",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "listarPropias",
+     "retorno": "List<Models.Publicacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "crearBorrador",
+     "retorno": "Models.Publicacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "titulo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "descripcion",
+       "tipo": "String"
+      },
+      {
+       "nombre": "categoria",
+       "tipo": "String"
+      },
+      {
+       "nombre": "modalidad",
+       "tipo": "Models.Modalidad"
+      },
+      {
+       "nombre": "duracion",
+       "tipo": "int"
+      },
+      {
+       "nombre": "precio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "cambiarEstado",
+     "retorno": "Models.Publicacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "publicacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "estado",
+       "tipo": "Models.EstadoPublicacion"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Contrato de la Mock UI Kit para el modulo Publicacion: la UI solo conoce esta interfaz."
+  },
+  {
+   "nombre": "PublicacionControllerImpl",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "publicaciones",
+     "tipo": "IPublicacionService"
+    },
+    {
+     "nombre": "busqueda",
+     "tipo": "IBusquedaService"
+    },
+    {
+     "nombre": "reloj",
+     "tipo": "Clock"
+    },
+    {
+     "nombre": "ejecutor",
+     "tipo": "EjecutorDeAcciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "listarPropias",
+     "retorno": "List<Models.Publicacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "crearBorrador",
+     "retorno": "Models.Publicacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "titulo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "descripcion",
+       "tipo": "String"
+      },
+      {
+       "nombre": "categoria",
+       "tipo": "String"
+      },
+      {
+       "nombre": "modalidad",
+       "tipo": "Models.Modalidad"
+      },
+      {
+       "nombre": "duracion",
+       "tipo": "int"
+      },
+      {
+       "nombre": "precio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "cambiarEstado",
+     "retorno": "Models.Publicacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "publicacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "estado",
+       "tipo": "Models.EstadoPublicacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "GRASP Controller",
+   "documentacion": "Controller delgado: delega en los casos de uso a traves de EjecutorDeAcciones y convierte el resultado a los registros de la UI. Sin SQL ni reglas de negocio."
+  },
+  {
+   "nombre": "ContratacionController",
+   "paquete": "Presentation",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "listarContrataciones",
+     "retorno": "List<Models.Contratacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "solicitar",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "publicacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "objetivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "avanzar",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Contrato de la Mock UI Kit para el modulo Contratacion: la UI solo conoce esta interfaz."
+  },
+  {
+   "nombre": "ContratacionControllerImpl",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "contrataciones",
+     "tipo": "IContratacionService"
+    },
+    {
+     "nombre": "ejecutor",
+     "tipo": "EjecutorDeAcciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "listarContrataciones",
+     "retorno": "List<Models.Contratacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "solicitar",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "publicacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "objetivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "avanzar",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "GRASP Controller",
+   "documentacion": "Controller delgado: delega en los casos de uso a traves de EjecutorDeAcciones y convierte el resultado a los registros de la UI. Sin SQL ni reglas de negocio."
+  },
+  {
+   "nombre": "WalletController",
+   "paquete": "Presentation",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "consultarSaldo",
+     "retorno": "int",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "listarMovimientos",
+     "retorno": "List<Models.Movimiento>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "acreditarDemo",
+     "retorno": "int",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "importe",
+       "tipo": "int"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Contrato de la Mock UI Kit para el modulo Wallet: la UI solo conoce esta interfaz."
+  },
+  {
+   "nombre": "WalletControllerImpl",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "billetera",
+     "tipo": "IBilleteraService"
+    },
+    {
+     "nombre": "ejecutor",
+     "tipo": "EjecutorDeAcciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "consultarSaldo",
+     "retorno": "int",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "listarMovimientos",
+     "retorno": "List<Models.Movimiento>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "acreditarDemo",
+     "retorno": "int",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "importe",
+       "tipo": "int"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "GRASP Controller",
+   "documentacion": "Controller delgado: delega en los casos de uso a traves de EjecutorDeAcciones y convierte el resultado a los registros de la UI. Sin SQL ni reglas de negocio."
+  },
+  {
+   "nombre": "NotificacionController",
+   "paquete": "Presentation",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "listarNotificaciones",
+     "retorno": "List<Models.Notificacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "marcarLeida",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "notificacionId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "marcarTodasLeidas",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Contrato de la Mock UI Kit para el modulo Notificacion: la UI solo conoce esta interfaz."
+  },
+  {
+   "nombre": "NotificacionControllerImpl",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "notificaciones",
+     "tipo": "INotificacionService"
+    },
+    {
+     "nombre": "ejecutor",
+     "tipo": "EjecutorDeAcciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "listarNotificaciones",
+     "retorno": "List<Models.Notificacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "marcarLeida",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "notificacionId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "marcarTodasLeidas",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "GRASP Controller",
+   "documentacion": "Controller delgado: delega en los casos de uso a traves de EjecutorDeAcciones y convierte el resultado a los registros de la UI. Sin SQL ni reglas de negocio."
+  },
+  {
+   "nombre": "PerfilController",
+   "paquete": "Presentation",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "verPerfil",
+     "retorno": "Models.Perfil",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Contrato de la Mock UI Kit para el modulo Perfil: la UI solo conoce esta interfaz."
+  },
+  {
+   "nombre": "PerfilControllerImpl",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "perfiles",
+     "tipo": "IPerfilService"
+    },
+    {
+     "nombre": "ejecutor",
+     "tipo": "EjecutorDeAcciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "verPerfil",
+     "retorno": "Models.Perfil",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "GRASP Controller",
+   "documentacion": "Controller delgado: delega en los casos de uso a traves de EjecutorDeAcciones y convierte el resultado a los registros de la UI. Sin SQL ni reglas de negocio."
+  },
+  {
+   "nombre": "UiControllers",
+   "paquete": "Presentation",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "busqueda",
+     "retorno": "BusquedaController",
+     "parametros": []
+    },
+    {
+     "nombre": "publicaciones",
+     "retorno": "PublicacionController",
+     "parametros": []
+    },
+    {
+     "nombre": "contrataciones",
+     "retorno": "ContratacionController",
+     "parametros": []
+    },
+    {
+     "nombre": "wallet",
+     "retorno": "WalletController",
+     "parametros": []
+    },
+    {
+     "nombre": "notificaciones",
+     "retorno": "NotificacionController",
+     "parametros": []
+    },
+    {
+     "nombre": "perfiles",
+     "retorno": "PerfilController",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Punto unico que conoce la UI: devuelve los seis controllers por interfaz."
+  },
+  {
+   "nombre": "SkillSwapControllers",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "busqueda",
+     "tipo": "BusquedaController"
+    },
+    {
+     "nombre": "publicaciones",
+     "tipo": "PublicacionController"
+    },
+    {
+     "nombre": "contrataciones",
+     "tipo": "ContratacionController"
+    },
+    {
+     "nombre": "wallet",
+     "tipo": "WalletController"
+    },
+    {
+     "nombre": "notificaciones",
+     "tipo": "NotificacionController"
+    },
+    {
+     "nombre": "perfiles",
+     "tipo": "PerfilController"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "busqueda",
+     "retorno": "BusquedaController",
+     "parametros": []
+    },
+    {
+     "nombre": "publicaciones",
+     "retorno": "PublicacionController",
+     "parametros": []
+    },
+    {
+     "nombre": "contrataciones",
+     "retorno": "ContratacionController",
+     "parametros": []
+    },
+    {
+     "nombre": "wallet",
+     "retorno": "WalletController",
+     "parametros": []
+    },
+    {
+     "nombre": "notificaciones",
+     "retorno": "NotificacionController",
+     "parametros": []
+    },
+    {
+     "nombre": "perfiles",
+     "retorno": "PerfilController",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Agrupa los controllers reales. Es la implementacion de UiControllers que arma ConfiguracionApp."
+  },
+  {
+   "nombre": "MockSkillSwapControllers",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [],
+   "documentacion": "Implementacion de UiControllers con datos en memoria que trae el kit; se usa sin --real."
+  },
+  {
+   "nombre": "SkillSwapView",
+   "paquete": "Presentation",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "controllers",
+     "tipo": "UiControllers"
+    }
+   ],
+   "operaciones": [],
+   "documentacion": "Ventana Swing del kit. Solo conoce UiControllers, nunca repositorios ni entidades."
+  },
+  {
+   "nombre": "IPerfilService",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "crearPerfil",
+     "retorno": "PerfilPublicoDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "PerfilCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "actualizarPerfil",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "PerfilCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "verPerfil",
+     "retorno": "PerfilPublicoDto",
+     "parametros": [
+      {
+       "nombre": "perfilId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "verPerfilDeUsuario",
+     "retorno": "PerfilPublicoDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "darDeBaja",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de entrada: casos de uso de Perfil."
+  },
+  {
+   "nombre": "PerfilService",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "perfilRepository",
+     "tipo": "IPerfilRepository"
+    },
+    {
+     "nombre": "publicacionRepository",
+     "tipo": "IPublicacionRepository"
+    },
+    {
+     "nombre": "contratacionRepository",
+     "tipo": "IContratacionRepository"
+    },
+    {
+     "nombre": "catalogoRepository",
+     "tipo": "ICatalogoRepository"
+    },
+    {
+     "nombre": "billeteraRepository",
+     "tipo": "IBilleteraRepository"
+    },
+    {
+     "nombre": "transacciones",
+     "tipo": "IGestorTransacciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "crearPerfil",
+     "retorno": "PerfilPublicoDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "PerfilCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "actualizarPerfil",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "PerfilCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "verPerfil",
+     "retorno": "PerfilPublicoDto",
+     "parametros": [
+      {
+       "nombre": "perfilId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "verPerfilDeUsuario",
+     "retorno": "PerfilPublicoDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "darDeBaja",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Caso de uso: busca en los puertos, delega las reglas en el dominio y define el limite transaccional."
+  },
+  {
+   "nombre": "IPublicacionService",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "crearBorrador",
+     "retorno": "Long",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "PublicacionCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "editar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "publicacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "PublicacionCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "cambiarEstado",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "CambiarEstadoCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPropias",
+     "retorno": "List<PublicacionDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de entrada: casos de uso de Publicacion."
+  },
+  {
+   "nombre": "PublicacionService",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "publicacionRepository",
+     "tipo": "IPublicacionRepository"
+    },
+    {
+     "nombre": "perfilRepository",
+     "tipo": "IPerfilRepository"
+    },
+    {
+     "nombre": "catalogoRepository",
+     "tipo": "ICatalogoRepository"
+    },
+    {
+     "nombre": "politicaRepository",
+     "tipo": "IPoliticaCancelacionRepository"
+    },
+    {
+     "nombre": "transacciones",
+     "tipo": "IGestorTransacciones"
+    },
+    {
+     "nombre": "reloj",
+     "tipo": "Clock"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "crearBorrador",
+     "retorno": "Long",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "PublicacionCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "editar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "publicacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "PublicacionCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "cambiarEstado",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "CambiarEstadoCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPropias",
+     "retorno": "List<PublicacionDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Caso de uso: busca en los puertos, delega las reglas en el dominio y define el limite transaccional."
+  },
+  {
+   "nombre": "IBusquedaService",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "buscar",
+     "retorno": "Pagina<PublicacionDto>",
+     "parametros": [
+      {
+       "nombre": "filtro",
+       "tipo": "FiltroBusqueda"
+      }
+     ]
+    },
+    {
+     "nombre": "listarCategorias",
+     "retorno": "List<CategoriaDto>",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Puerto de entrada: casos de uso de Busqueda."
+  },
+  {
+   "nombre": "BusquedaService",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "publicacionRepository",
+     "tipo": "IPublicacionRepository"
+    },
+    {
+     "nombre": "catalogoRepository",
+     "tipo": "ICatalogoRepository"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "buscar",
+     "retorno": "Pagina<PublicacionDto>",
+     "parametros": [
+      {
+       "nombre": "filtro",
+       "tipo": "FiltroBusqueda"
+      }
+     ]
+    },
+    {
+     "nombre": "listarCategorias",
+     "retorno": "List<CategoriaDto>",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Caso de uso: busca en los puertos, delega las reglas en el dominio y define el limite transaccional."
+  },
+  {
+   "nombre": "IRecomendacionService",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "recomendar",
+     "retorno": "Pagina<PublicacionDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de entrada: casos de uso de Recomendacion."
+  },
+  {
+   "nombre": "RecomendacionService",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "estrategia",
+     "tipo": "IEstrategiaRecomendacion"
+    },
+    {
+     "nombre": "perfilRepository",
+     "tipo": "IPerfilRepository"
+    },
+    {
+     "nombre": "publicacionRepository",
+     "tipo": "IPublicacionRepository"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "recomendar",
+     "retorno": "Pagina<PublicacionDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Caso de uso: busca en los puertos, delega las reglas en el dominio y define el limite transaccional."
+  },
+  {
+   "nombre": "IContratacionService",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "solicitar",
+     "retorno": "Long",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "SolicitarCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "franjaId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "long",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "listar",
+     "retorno": "Pagina<ContratacionDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "verComprobante",
+     "retorno": "ContratacionDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de entrada: casos de uso de Contratacion."
+  },
+  {
+   "nombre": "ContratacionService",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "contratacionRepository",
+     "tipo": "IContratacionRepository"
+    },
+    {
+     "nombre": "publicacionRepository",
+     "tipo": "IPublicacionRepository"
+    },
+    {
+     "nombre": "perfilRepository",
+     "tipo": "IPerfilRepository"
+    },
+    {
+     "nombre": "billeteraRepository",
+     "tipo": "IBilleteraRepository"
+    },
+    {
+     "nombre": "transacciones",
+     "tipo": "IGestorTransacciones"
+    },
+    {
+     "nombre": "eventos",
+     "tipo": "IPublicadorEventos"
+    },
+    {
+     "nombre": "reloj",
+     "tipo": "Clock"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "solicitar",
+     "retorno": "Long",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "SolicitarCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "franjaId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "long",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "listar",
+     "retorno": "Pagina<ContratacionDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "verComprobante",
+     "retorno": "ContratacionDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Caso de uso: busca en los puertos, delega las reglas en el dominio y define el limite transaccional."
+  },
+  {
+   "nombre": "ICalificacionService",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "calificar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "CalificarCommand"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de entrada: casos de uso de Calificacion."
+  },
+  {
+   "nombre": "CalificacionService",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "contratacionRepository",
+     "tipo": "IContratacionRepository"
+    },
+    {
+     "nombre": "calificacionRepository",
+     "tipo": "ICalificacionRepository"
+    },
+    {
+     "nombre": "transacciones",
+     "tipo": "IGestorTransacciones"
+    },
+    {
+     "nombre": "eventos",
+     "tipo": "IPublicadorEventos"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "calificar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "CalificarCommand"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Caso de uso: busca en los puertos, delega las reglas en el dominio y define el limite transaccional."
+  },
+  {
+   "nombre": "INotificacionService",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "listar",
+     "retorno": "Pagina<NotificacionDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "marcarLeida",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "notificacionId",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de entrada: casos de uso de Notificacion."
+  },
+  {
+   "nombre": "NotificacionService",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "notificacionRepository",
+     "tipo": "INotificacionRepository"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "listar",
+     "retorno": "Pagina<NotificacionDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "marcarLeida",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "notificacionId",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Caso de uso: busca en los puertos, delega las reglas en el dominio y define el limite transaccional."
+  },
+  {
+   "nombre": "IBilleteraService",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "consultar",
+     "retorno": "BilleteraDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "acreditarDemo",
+     "retorno": "BilleteraDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "importe",
+       "tipo": "long"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de entrada: casos de uso de Billetera."
+  },
+  {
+   "nombre": "BilleteraService",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "billeteraRepository",
+     "tipo": "IBilleteraRepository"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "consultar",
+     "retorno": "BilleteraDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "acreditarDemo",
+     "retorno": "BilleteraDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "importe",
+       "tipo": "long"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Caso de uso: busca en los puertos, delega las reglas en el dominio y define el limite transaccional."
+  },
+  {
+   "nombre": "PerfilCommand",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "tipo",
+     "tipo": "TipoPerfil"
+    },
+    {
+     "nombre": "nombreVisible",
+     "tipo": "String"
+    },
+    {
+     "nombre": "biografia",
+     "tipo": "String"
+    },
+    {
+     "nombre": "zonaHoraria",
+     "tipo": "String"
+    },
+    {
+     "nombre": "habilidadIds",
+     "tipo": "List<Long>"
+    },
+    {
+     "nombre": "interesIds",
+     "tipo": "List<Long>"
+    },
+    {
+     "nombre": "disponibilidad",
+     "tipo": "List<RangoHorario>"
+    },
+    {
+     "nombre": "canales",
+     "tipo": "Set<CanalNotificacion>"
+    }
+   ],
+   "operaciones": []
+  },
+  {
+   "nombre": "PublicacionCommand",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "tipo",
+     "tipo": "TipoPublicacion"
+    },
+    {
+     "nombre": "titulo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "descripcion",
+     "tipo": "String"
+    },
+    {
+     "nombre": "categoriaId",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "habilidadIds",
+     "tipo": "List<Long>"
+    },
+    {
+     "nombre": "modalidad",
+     "tipo": "Modalidad"
+    },
+    {
+     "nombre": "duracionMinutos",
+     "tipo": "int"
+    },
+    {
+     "nombre": "cupo",
+     "tipo": "int"
+    },
+    {
+     "nombre": "precioBase",
+     "tipo": "long"
+    },
+    {
+     "nombre": "etiquetas",
+     "tipo": "Set<String>"
+    },
+    {
+     "nombre": "inicioFranjas",
+     "tipo": "List<LocalDateTime>"
+    },
+    {
+     "nombre": "politicaCancelacionId",
+     "tipo": "Long"
+    }
+   ],
+   "operaciones": []
+  },
+  {
+   "nombre": "CambiarEstadoCommand",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "publicacionId",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "accion",
+     "tipo": "AccionPublicacion"
+    },
+    {
+     "nombre": "motivo",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": []
+  },
+  {
+   "nombre": "AccionPublicacion",
+   "paquete": "Application",
+   "tipo": "enum",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "ejecutar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "publicacion",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      }
+     ],
+     "abstracta": true
+    }
+   ],
+   "documentacion": "Cada literal redefine ejecutar(publicacion, userId, motivo) y llama al metodo de dominio correspondiente: no hay switch en el caso de uso.",
+   "literales": [
+    "PUBLICAR",
+    "PAUSAR",
+    "REANUDAR",
+    "CERRAR",
+    "CANCELAR"
+   ]
+  },
+  {
+   "nombre": "SolicitarCommand",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "publicacionId",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "franjaId",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "mensaje",
+     "tipo": "String"
+    },
+    {
+     "nombre": "objetivo",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": []
+  },
+  {
+   "nombre": "CalificarCommand",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "contratacionId",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "puntaje",
+     "tipo": "int"
+    },
+    {
+     "nombre": "comentario",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": []
+  },
+  {
+   "nombre": "FiltroBusqueda",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "texto",
+     "tipo": "String"
+    },
+    {
+     "nombre": "categoriaId",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "modalidad",
+     "tipo": "Modalidad"
+    },
+    {
+     "nombre": "precioMinimo",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "precioMaximo",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "habilidadId",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "reputacionMinima",
+     "tipo": "Double"
+    },
+    {
+     "nombre": "orden",
+     "tipo": "CriterioOrden"
+    },
+    {
+     "nombre": "pagina",
+     "tipo": "int"
+    },
+    {
+     "nombre": "tamanio",
+     "tipo": "int"
+    }
+   ],
+   "operaciones": []
+  },
+  {
+   "nombre": "CriterioOrden",
+   "paquete": "Application",
+   "tipo": "enum",
+   "atributos": [],
+   "operaciones": [],
+   "documentacion": "Se traduce a ORDER BY en la consulta del repositorio (lado query, CQRS).",
+   "literales": [
+    "RELEVANCIA",
+    "MEJOR_REPUTACION",
+    "MENOR_PRECIO",
+    "MAS_RECIENTE"
+   ]
+  },
+  {
+   "nombre": "Pagina<T>",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "contenido",
+     "tipo": "List<T>"
+    },
+    {
+     "nombre": "numero",
+     "tipo": "int"
+    },
+    {
+     "nombre": "tamanio",
+     "tipo": "int"
+    },
+    {
+     "nombre": "totalElementos",
+     "tipo": "long"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "de",
+     "retorno": "Pagina<T>",
+     "parametros": [
+      {
+       "nombre": "todos",
+       "tipo": "List<T>"
+      },
+      {
+       "nombre": "numero",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "totalPaginas",
+     "retorno": "int",
+     "parametros": []
+    },
+    {
+     "nombre": "map",
+     "retorno": "Pagina<R>",
+     "parametros": [
+      {
+       "nombre": "conversion",
+       "tipo": "Function<T, R>"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nombre": "PublicacionDto",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "titulo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "categoria",
+     "tipo": "String"
+    },
+    {
+     "nombre": "modalidad",
+     "tipo": "String"
+    },
+    {
+     "nombre": "precio",
+     "tipo": "long"
+    },
+    {
+     "nombre": "reputacionAutor",
+     "tipo": "double"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "String"
+    },
+    {
+     "nombre": "descripcion",
+     "tipo": "String"
+    },
+    {
+     "nombre": "duracionMinutos",
+     "tipo": "int"
+    },
+    {
+     "nombre": "autor",
+     "tipo": "String"
+    },
+    {
+     "nombre": "etiquetas",
+     "tipo": "List<String>"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "desde",
+     "retorno": "PublicacionDto",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      }
+     ],
+     "estatico": true
+    }
+   ]
+  },
+  {
+   "nombre": "CategoriaDto",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "desde",
+     "retorno": "CategoriaDto",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Categoria"
+      }
+     ],
+     "estatico": true
+    }
+   ]
+  },
+  {
+   "nombre": "PerfilPublicoDto",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "nombreVisible",
+     "tipo": "String"
+    },
+    {
+     "nombre": "biografia",
+     "tipo": "String"
+    },
+    {
+     "nombre": "reputacion",
+     "tipo": "double"
+    },
+    {
+     "nombre": "cantidadCalificaciones",
+     "tipo": "int"
+    },
+    {
+     "nombre": "habilidades",
+     "tipo": "List<String>"
+    },
+    {
+     "nombre": "publicacionesActivas",
+     "tipo": "List<PublicacionDto>"
+    },
+    {
+     "nombre": "historialResumido",
+     "tipo": "List<String>"
+    }
+   ],
+   "operaciones": []
+  },
+  {
+   "nombre": "ContratacionDto",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "publicacion",
+     "tipo": "String"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "String"
+    },
+    {
+     "nombre": "precio",
+     "tipo": "long"
+    },
+    {
+     "nombre": "inicio",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "detallePrecio",
+     "tipo": "String"
+    },
+    {
+     "nombre": "contraparte",
+     "tipo": "String"
+    },
+    {
+     "nombre": "rol",
+     "tipo": "String"
+    },
+    {
+     "nombre": "CLIENTE",
+     "tipo": "String"
+    },
+    {
+     "nombre": "PROVEEDOR",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "desde",
+     "retorno": "ContratacionDto",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ],
+     "estatico": true
+    }
+   ]
+  },
+  {
+   "nombre": "NotificacionDto",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "mensaje",
+     "tipo": "String"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "leida",
+     "tipo": "boolean"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "desde",
+     "retorno": "NotificacionDto",
+     "parametros": [
+      {
+       "nombre": "n",
+       "tipo": "Notificacion"
+      }
+     ],
+     "estatico": true
+    }
+   ]
+  },
+  {
+   "nombre": "BilleteraDto",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "saldo",
+     "tipo": "long"
+    },
+    {
+     "nombre": "movimientos",
+     "tipo": "List<MovimientoDto>"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "desde",
+     "retorno": "BilleteraDto",
+     "parametros": [
+      {
+       "nombre": "b",
+       "tipo": "Billetera"
+      }
+     ],
+     "estatico": true
+    }
+   ]
+  },
+  {
+   "nombre": "MovimientoDto",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "monto",
+     "tipo": "long"
+    },
+    {
+     "nombre": "concepto",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "desde",
+     "retorno": "MovimientoDto",
+     "parametros": [
+      {
+       "nombre": "m",
+       "tipo": "MovimientoCredito"
+      }
+     ],
+     "estatico": true
+    }
+   ]
+  },
+  {
+   "nombre": "IPerfilRepository",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Perfil",
+     "parametros": [
+      {
+       "nombre": "perfil",
+       "tipo": "Perfil"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorId",
+     "retorno": "Optional<Perfil>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorUserId",
+     "retorno": "Optional<Perfil>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de salida de persistencia (Protected Variations: cambiar JPA no toca los casos de uso)."
+  },
+  {
+   "nombre": "IPublicacionRepository",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Publicacion",
+     "parametros": [
+      {
+       "nombre": "publicacion",
+       "tipo": "Publicacion"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorId",
+     "retorno": "Optional<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "buscar",
+     "retorno": "Pagina<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "filtro",
+       "tipo": "FiltroBusqueda"
+      },
+      {
+       "nombre": "categoriaIds",
+       "tipo": "List<Long>"
+      }
+     ]
+    },
+    {
+     "nombre": "listarActivasDe",
+     "retorno": "List<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "autorId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "listarDeAutor",
+     "retorno": "List<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "autorId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPublicadas",
+     "retorno": "List<Publicacion>",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Puerto de salida de persistencia (Protected Variations: cambiar JPA no toca los casos de uso)."
+  },
+  {
+   "nombre": "IContratacionRepository",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Contratacion",
+     "parametros": [
+      {
+       "nombre": "contratacion",
+       "tipo": "Contratacion"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorId",
+     "retorno": "Optional<Contratacion>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPorParticipante",
+     "retorno": "Pagina<Contratacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "contarRecientesPorPublicacion",
+     "retorno": "Map<Long, Long>",
+     "parametros": [
+      {
+       "nombre": "desde",
+       "tipo": "LocalDateTime"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de salida de persistencia (Protected Variations: cambiar JPA no toca los casos de uso)."
+  },
+  {
+   "nombre": "IBilleteraRepository",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Billetera",
+     "parametros": [
+      {
+       "nombre": "billetera",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorUserId",
+     "retorno": "Optional<Billetera>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de salida de persistencia (Protected Variations: cambiar JPA no toca los casos de uso)."
+  },
+  {
+   "nombre": "ICalificacionRepository",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Calificacion",
+     "parametros": [
+      {
+       "nombre": "calificacion",
+       "tipo": "Calificacion"
+      }
+     ]
+    },
+    {
+     "nombre": "listarRecibidas",
+     "retorno": "List<Calificacion>",
+     "parametros": [
+      {
+       "nombre": "perfilId",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de salida de persistencia (Protected Variations: cambiar JPA no toca los casos de uso)."
+  },
+  {
+   "nombre": "INotificacionRepository",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Notificacion",
+     "parametros": [
+      {
+       "nombre": "notificacion",
+       "tipo": "Notificacion"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorId",
+     "retorno": "Optional<Notificacion>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPorDestinatario",
+     "retorno": "Pagina<Notificacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de salida de persistencia (Protected Variations: cambiar JPA no toca los casos de uso)."
+  },
+  {
+   "nombre": "ICatalogoRepository",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "buscarCategoria",
+     "retorno": "Optional<Categoria>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarHabilidades",
+     "retorno": "List<Habilidad>",
+     "parametros": [
+      {
+       "nombre": "ids",
+       "tipo": "List<Long>"
+      }
+     ]
+    },
+    {
+     "nombre": "listarCategorias",
+     "retorno": "List<Categoria>",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Puerto de salida de persistencia (Protected Variations: cambiar JPA no toca los casos de uso)."
+  },
+  {
+   "nombre": "IPoliticaCancelacionRepository",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "buscarPorId",
+     "retorno": "Optional<PoliticaCancelacion>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de salida de persistencia (Protected Variations: cambiar JPA no toca los casos de uso)."
+  },
+  {
+   "nombre": "IGestorTransacciones",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "ejecutar",
+     "retorno": "T",
+     "parametros": [
+      {
+       "nombre": "operacion",
+       "tipo": "Supplier<T>"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Limite transaccional de aceptar, pagar, cancelar y calificar. Commit o rollback de todo lo que hace la operacion."
+  },
+  {
+   "nombre": "IServicioIdentidad",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "validarUsuario",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "obtenerEmail",
+     "retorno": "String",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Target del Adapter de identidad externa."
+  },
+  {
+   "nombre": "ICanalNotificacion",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "enviar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "notificacion",
+       "tipo": "Notificacion"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Target de los adapters de email y push, y contrato del canal interno."
+  },
+  {
+   "nombre": "ICanalNotificacionFactory",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "crear",
+     "retorno": "ICanalNotificacion",
+     "parametros": [
+      {
+       "nombre": "canal",
+       "tipo": "CanalNotificacion"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de la Simple Factory de canales: Application no conoce los adapters concretos."
+  },
+  {
+   "nombre": "IPublicadorEventos",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "suscribir",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "observer",
+       "tipo": "IEventoObserver"
+      }
+     ]
+    },
+    {
+     "nombre": "desuscribir",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "observer",
+       "tipo": "IEventoObserver"
+      }
+     ]
+    },
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "evento",
+       "tipo": "EventoContratacion"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Observer: rol Sujeto (Observable)."
+  },
+  {
+   "nombre": "IEventoObserver",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "actualizar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "evento",
+       "tipo": "EventoContratacion"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Observer: rol Observador."
+  },
+  {
+   "nombre": "PublicadorEventos",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "observers",
+     "tipo": "List<IEventoObserver>"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "suscribir",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "observer",
+       "tipo": "IEventoObserver"
+      }
+     ]
+    },
+    {
+     "nombre": "desuscribir",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "observer",
+       "tipo": "IEventoObserver"
+      }
+     ]
+    },
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "evento",
+       "tipo": "EventoContratacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Observer · Sujeto concreto"
+  },
+  {
+   "nombre": "NotificacionObserver",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "perfilRepository",
+     "tipo": "IPerfilRepository"
+    },
+    {
+     "nombre": "canalFactory",
+     "tipo": "ICanalNotificacionFactory"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "actualizar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "evento",
+       "tipo": "EventoContratacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Observer · Observador concreto",
+   "documentacion": "Por cada destinatario del evento arma la Notificacion y la envia por cada canal que el usuario eligio (email, push y/o interna)."
+  },
+  {
+   "nombre": "ReputacionObserver",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "perfilRepository",
+     "tipo": "IPerfilRepository"
+    },
+    {
+     "nombre": "calificacionRepository",
+     "tipo": "ICalificacionRepository"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "actualizar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "evento",
+       "tipo": "EventoContratacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Observer · Observador concreto",
+   "documentacion": "Ante CALIFICACION_REGISTRADA recalcula la reputacion del calificado."
+  },
+  {
+   "nombre": "IEstrategiaRecomendacion",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "recomendar",
+     "retorno": "List<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "perfil",
+       "tipo": "Perfil"
+      },
+      {
+       "nombre": "candidatas",
+       "tipo": "List<Publicacion>"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Strategy: rol Estrategia. Se elige en el composition root; el caso de uso no cambia."
+  },
+  {
+   "nombre": "AfinidadPorHabilidades",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "recomendar",
+     "retorno": "List<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "perfil",
+       "tipo": "Perfil"
+      },
+      {
+       "nombre": "candidatas",
+       "tipo": "List<Publicacion>"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Strategy · Estrategia concreta",
+   "documentacion": "Puntua cada publicacion por coincidencia entre sus habilidades y los intereses y habilidades del perfil."
+  },
+  {
+   "nombre": "PopularidadReciente",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "diasVentana",
+     "tipo": "int"
+    },
+    {
+     "nombre": "contratacionRepository",
+     "tipo": "IContratacionRepository"
+    },
+    {
+     "nombre": "reloj",
+     "tipo": "Clock"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "recomendar",
+     "retorno": "List<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "perfil",
+       "tipo": "Perfil"
+      },
+      {
+       "nombre": "candidatas",
+       "tipo": "List<Publicacion>"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Strategy · Estrategia concreta",
+   "documentacion": "Ordena por cantidad de contrataciones en los ultimos diasVentana dias (default 30)."
+  },
+  {
+   "nombre": "RecursoNoEncontradoException",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getMensaje",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Extiende RuntimeException. La traduce EjecutorDeAcciones."
+  },
+  {
+   "nombre": "AccesoDenegadoException",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getMensaje",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Extiende RuntimeException: el userId no existe o no es parte de la operacion."
+  },
+  {
+   "nombre": "ConflictoConcurrenciaException",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [],
+   "documentacion": "Extiende RuntimeException. La lanza JpaGestorTransacciones cuando @Version detecta que otra operacion modifico el mismo dato (por ejemplo el ultimo cupo); la operacion se deshizo completa y se puede reintentar."
+  },
+  {
+   "nombre": "JpaGestorTransacciones",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "emf",
+     "tipo": "EntityManagerFactory"
+    },
+    {
+     "nombre": "actual",
+     "tipo": "ThreadLocal<EntityManager>"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "ejecutar",
+     "retorno": "T",
+     "parametros": [
+      {
+       "nombre": "operacion",
+       "tipo": "Supplier<T>"
+      }
+     ]
+    },
+    {
+     "nombre": "entityManager",
+     "retorno": "EntityManager",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Abre el EntityManager y la transaccion; commit al terminar, rollback ante excepcion. Traduce OptimisticLockException a ConflictoConcurrenciaException."
+  },
+  {
+   "nombre": "PerfilJpaRepository",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "gestor",
+     "tipo": "JpaGestorTransacciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Perfil",
+     "parametros": [
+      {
+       "nombre": "perfil",
+       "tipo": "Perfil"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorId",
+     "retorno": "Optional<Perfil>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorUserId",
+     "retorno": "Optional<Perfil>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Implementacion JPA del puerto. Consultas con JOIN FETCH o proyecciones para evitar N+1."
+  },
+  {
+   "nombre": "PublicacionJpaRepository",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "gestor",
+     "tipo": "JpaGestorTransacciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Publicacion",
+     "parametros": [
+      {
+       "nombre": "publicacion",
+       "tipo": "Publicacion"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorId",
+     "retorno": "Optional<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "buscar",
+     "retorno": "Pagina<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "filtro",
+       "tipo": "FiltroBusqueda"
+      },
+      {
+       "nombre": "categoriaIds",
+       "tipo": "List<Long>"
+      }
+     ]
+    },
+    {
+     "nombre": "listarActivasDe",
+     "retorno": "List<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "autorId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "listarDeAutor",
+     "retorno": "List<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "autorId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPublicadas",
+     "retorno": "List<Publicacion>",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Implementacion JPA del puerto. Consultas con JOIN FETCH o proyecciones para evitar N+1."
+  },
+  {
+   "nombre": "ContratacionJpaRepository",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "gestor",
+     "tipo": "JpaGestorTransacciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Contratacion",
+     "parametros": [
+      {
+       "nombre": "contratacion",
+       "tipo": "Contratacion"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorId",
+     "retorno": "Optional<Contratacion>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPorParticipante",
+     "retorno": "Pagina<Contratacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "contarRecientesPorPublicacion",
+     "retorno": "Map<Long, Long>",
+     "parametros": [
+      {
+       "nombre": "desde",
+       "tipo": "LocalDateTime"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Implementacion JPA del puerto. Consultas con JOIN FETCH o proyecciones para evitar N+1."
+  },
+  {
+   "nombre": "BilleteraJpaRepository",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "gestor",
+     "tipo": "JpaGestorTransacciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Billetera",
+     "parametros": [
+      {
+       "nombre": "billetera",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorUserId",
+     "retorno": "Optional<Billetera>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Implementacion JPA del puerto. Consultas con JOIN FETCH o proyecciones para evitar N+1."
+  },
+  {
+   "nombre": "CalificacionJpaRepository",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "gestor",
+     "tipo": "JpaGestorTransacciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Calificacion",
+     "parametros": [
+      {
+       "nombre": "calificacion",
+       "tipo": "Calificacion"
+      }
+     ]
+    },
+    {
+     "nombre": "listarRecibidas",
+     "retorno": "List<Calificacion>",
+     "parametros": [
+      {
+       "nombre": "perfilId",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Implementacion JPA del puerto. Consultas con JOIN FETCH o proyecciones para evitar N+1."
+  },
+  {
+   "nombre": "NotificacionJpaRepository",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "gestor",
+     "tipo": "JpaGestorTransacciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "guardar",
+     "retorno": "Notificacion",
+     "parametros": [
+      {
+       "nombre": "notificacion",
+       "tipo": "Notificacion"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarPorId",
+     "retorno": "Optional<Notificacion>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPorDestinatario",
+     "retorno": "Pagina<Notificacion>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Implementacion JPA del puerto. Consultas con JOIN FETCH o proyecciones para evitar N+1."
+  },
+  {
+   "nombre": "CatalogoJpaRepository",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "gestor",
+     "tipo": "JpaGestorTransacciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "buscarCategoria",
+     "retorno": "Optional<Categoria>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "buscarHabilidades",
+     "retorno": "List<Habilidad>",
+     "parametros": [
+      {
+       "nombre": "ids",
+       "tipo": "List<Long>"
+      }
+     ]
+    },
+    {
+     "nombre": "listarCategorias",
+     "retorno": "List<Categoria>",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Implementacion JPA del puerto. Consultas con JOIN FETCH o proyecciones para evitar N+1."
+  },
+  {
+   "nombre": "PoliticaCancelacionJpaRepository",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "gestor",
+     "tipo": "JpaGestorTransacciones"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "buscarPorId",
+     "retorno": "Optional<PoliticaCancelacion>",
+     "parametros": [
+      {
+       "nombre": "id",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Implementacion JPA del puerto. Consultas con JOIN FETCH o proyecciones para evitar N+1."
+  },
+  {
+   "nombre": "PersistenceFactory",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "UNIDAD",
+     "tipo": "String"
+    },
+    {
+     "nombre": "URL_MYSQL",
+     "tipo": "String"
+    },
+    {
+     "nombre": "USUARIO_MYSQL",
+     "tipo": "String"
+    },
+    {
+     "nombre": "CLAVE_MYSQL",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "crear",
+     "retorno": "EntityManagerFactory",
+     "parametros": [],
+     "estatico": true
+    },
+    {
+     "nombre": "crear",
+     "retorno": "EntityManagerFactory",
+     "parametros": [
+      {
+       "nombre": "url",
+       "tipo": "String"
+      },
+      {
+       "nombre": "usuario",
+       "tipo": "String"
+      },
+      {
+       "nombre": "clave",
+       "tipo": "String"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "migrar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "url",
+       "tipo": "String"
+      },
+      {
+       "nombre": "usuario",
+       "tipo": "String"
+      },
+      {
+       "nombre": "clave",
+       "tipo": "String"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "abrir",
+     "retorno": "EntityManagerFactory",
+     "parametros": [
+      {
+       "nombre": "url",
+       "tipo": "String"
+      },
+      {
+       "nombre": "usuario",
+       "tipo": "String"
+      },
+      {
+       "nombre": "clave",
+       "tipo": "String"
+      }
+     ],
+     "estatico": true
+    }
+   ],
+   "documentacion": "Corre las migraciones de Flyway (V1 esquema, V2 datos de demostracion) y abre la unidad de persistencia, que solo valida el esquema. Por defecto usa el MySQL de docker-compose.yml; SKILLSWAP_DB_URL, SKILLSWAP_DB_USER y SKILLSWAP_DB_PASSWORD lo cambian."
+  },
+  {
+   "nombre": "ConfiguracionApp",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "crear",
+     "retorno": "UiControllers",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Puertos"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "crear",
+     "retorno": "UiControllers",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Puertos"
+      },
+      {
+       "nombre": "estrategia",
+       "tipo": "IEstrategiaRecomendacion"
+      }
+     ],
+     "estatico": true
+    }
+   ],
+   "estereotipo": "Composition Root",
+   "documentacion": "Unico lugar que conoce las clases concretas de servicios, observers y controllers (sin Spring). Recibe los puertos de salida ya construidos: JPA en la aplicacion, memoria en las pruebas."
+  },
+  {
+   "nombre": "SkillSwapApplication",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "main",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "args",
+       "tipo": "String[]"
+      }
+     ],
+     "estatico": true
+    }
+   ],
+   "documentacion": "Punto de entrada. Sin parametros usa MockSkillSwapControllers; con --real arma los repositorios JPA sobre MySQL y cierra el EntityManagerFactory al salir."
+  },
+  {
+   "nombre": "IdentidadAdapter",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "cliente",
+     "tipo": "IdentityClientMock"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "validarUsuario",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "obtenerEmail",
+     "retorno": "String",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Adapter · Adapter"
+  },
+  {
+   "nombre": "IdentityClientMock",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "fetchUser",
+     "retorno": "Map<String, String>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Adapter · Adaptee",
+   "documentacion": "Simula el SDK del servicio de identidad. No se modifica."
+  },
+  {
+   "nombre": "EmailAdapter",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "cliente",
+     "tipo": "EmailClientMock"
+    },
+    {
+     "nombre": "identidad",
+     "tipo": "IServicioIdentidad"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "enviar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "notificacion",
+       "tipo": "Notificacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Adapter · Adapter"
+  },
+  {
+   "nombre": "EmailClientMock",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "sendMail",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "to",
+       "tipo": "String"
+      },
+      {
+       "nombre": "subject",
+       "tipo": "String"
+      },
+      {
+       "nombre": "body",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Adapter · Adaptee"
+  },
+  {
+   "nombre": "PushAdapter",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "cliente",
+     "tipo": "PushClientMock"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "enviar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "notificacion",
+       "tipo": "Notificacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Adapter · Adapter"
+  },
+  {
+   "nombre": "PushClientMock",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "push",
+     "retorno": "int",
+     "parametros": [
+      {
+       "nombre": "deviceId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "payload",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Adapter · Adaptee"
+  },
+  {
+   "nombre": "CanalInterno",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "notificacionRepository",
+     "tipo": "INotificacionRepository"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "enviar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "notificacion",
+       "tipo": "Notificacion"
+      }
+     ]
+    }
+   ],
+   "documentacion": "No adapta a nadie: guarda la Notificacion en la bandeja interna."
+  },
+  {
+   "nombre": "CanalNotificacionFactory",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "emailClient",
+     "tipo": "EmailClientMock"
+    },
+    {
+     "nombre": "pushClient",
+     "tipo": "PushClientMock"
+    },
+    {
+     "nombre": "identidad",
+     "tipo": "IServicioIdentidad"
+    },
+    {
+     "nombre": "notificacionRepository",
+     "tipo": "INotificacionRepository"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "crear",
+     "retorno": "ICanalNotificacion",
+     "parametros": [
+      {
+       "nombre": "canal",
+       "tipo": "CanalNotificacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Simple Factory",
+   "documentacion": "Un unico switch sobre CanalNotificacion: agregar un canal toca solo esta clase y el adapter nuevo."
+  },
+  {
+   "nombre": "TipoPerfil",
+   "paquete": "Domain",
+   "tipo": "enum",
+   "atributos": [],
+   "operaciones": [],
+   "literales": [
+    "PROFESIONAL",
+    "ORGANIZACION"
+   ]
+  },
+  {
+   "nombre": "TipoPublicacion",
+   "paquete": "Domain",
+   "tipo": "enum",
+   "atributos": [],
+   "operaciones": [],
+   "literales": [
+    "MENTORIA",
+    "SERVICIO",
+    "DESAFIO"
+   ]
+  },
+  {
+   "nombre": "Modalidad",
+   "paquete": "Domain",
+   "tipo": "enum",
+   "atributos": [],
+   "operaciones": [],
+   "literales": [
+    "REMOTA",
+    "PRESENCIAL"
+   ]
+  },
+  {
+   "nombre": "CanalNotificacion",
+   "paquete": "Domain",
+   "tipo": "enum",
+   "atributos": [],
+   "operaciones": [],
+   "literales": [
+    "EMAIL",
+    "PUSH",
+    "INTERNA"
+   ]
+  },
+  {
+   "nombre": "TipoMovimiento",
+   "paquete": "Domain",
+   "tipo": "enum",
+   "atributos": [],
+   "operaciones": [],
+   "literales": [
+    "DEBITO",
+    "CREDITO",
+    "REINTEGRO"
+   ]
+  },
+  {
+   "nombre": "TipoEvento",
+   "paquete": "Domain",
+   "tipo": "enum",
+   "atributos": [],
+   "operaciones": [],
+   "literales": [
+    "SOLICITUD_RECIBIDA",
+    "SOLICITUD_ACEPTADA",
+    "PAGO_CONFIRMADO",
+    "REPROGRAMACION",
+    "CANCELACION",
+    "SESION_COMPLETADA",
+    "CALIFICACION_REGISTRADA"
+   ]
+  },
+  {
+   "nombre": "SkillCoins",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "cantidad",
+     "tipo": "long"
+    },
+    {
+     "nombre": "CERO",
+     "tipo": "SkillCoins"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "sumar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "otro",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "restar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "otro",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "restarHastaCero",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "otro",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "porcentaje",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "valor",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "esMenorQue",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "otro",
+       "tipo": "SkillCoins"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Value Object",
+   "documentacion": "Inmutable y nunca negativo: restar lanza ReglaNegocioException si el resultado seria negativo."
+  },
+  {
+   "nombre": "RangoHorario",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "dia",
+     "tipo": "DayOfWeek"
+    },
+    {
+     "nombre": "desde",
+     "tipo": "LocalTime"
+    },
+    {
+     "nombre": "hasta",
+     "tipo": "LocalTime"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "incluye",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "momento",
+       "tipo": "LocalDateTime"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Value Object"
+  },
+  {
+   "nombre": "CambioEstado",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "actorId",
+     "tipo": "String"
+    },
+    {
+     "nombre": "estadoAnterior",
+     "tipo": "String"
+    },
+    {
+     "nombre": "estadoNuevo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "motivo",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [],
+   "estereotipo": "Value Object",
+   "documentacion": "Registro inmutable del historial: solo se agrega, nunca se edita."
+  },
+  {
+   "nombre": "ReglaNegocioException",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getMensaje",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Extiende RuntimeException. La lanza el dominio ante transiciones invalidas, saldo insuficiente, cupo agotado, etc."
+  },
+  {
+   "nombre": "Perfil",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "userId",
+     "tipo": "String"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "TipoPerfil"
+    },
+    {
+     "nombre": "nombreVisible",
+     "tipo": "String"
+    },
+    {
+     "nombre": "biografia",
+     "tipo": "String"
+    },
+    {
+     "nombre": "zonaHoraria",
+     "tipo": "ZoneId"
+    },
+    {
+     "nombre": "habilidades",
+     "tipo": "List<Habilidad>"
+    },
+    {
+     "nombre": "intereses",
+     "tipo": "List<Habilidad>"
+    },
+    {
+     "nombre": "disponibilidad",
+     "tipo": "List<RangoHorario>"
+    },
+    {
+     "nombre": "canales",
+     "tipo": "Set<CanalNotificacion>"
+    },
+    {
+     "nombre": "reputacion",
+     "tipo": "double"
+    },
+    {
+     "nombre": "cantidadCalificaciones",
+     "tipo": "int"
+    },
+    {
+     "nombre": "activo",
+     "tipo": "boolean"
+    },
+    {
+     "nombre": "version",
+     "tipo": "long"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "actualizarDatos",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "nombreVisible",
+       "tipo": "String"
+      },
+      {
+       "nombre": "biografia",
+       "tipo": "String"
+      },
+      {
+       "nombre": "zonaHoraria",
+       "tipo": "ZoneId"
+      }
+     ]
+    },
+    {
+     "nombre": "definirHabilidades",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "habilidades",
+       "tipo": "List<Habilidad>"
+      },
+      {
+       "nombre": "intereses",
+       "tipo": "List<Habilidad>"
+      }
+     ]
+    },
+    {
+     "nombre": "definirDisponibilidad",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "rangos",
+       "tipo": "List<RangoHorario>"
+      }
+     ]
+    },
+    {
+     "nombre": "elegirCanales",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "canales",
+       "tipo": "Set<CanalNotificacion>"
+      }
+     ]
+    },
+    {
+     "nombre": "recalcularReputacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "calificaciones",
+       "tipo": "List<Calificacion>"
+      }
+     ]
+    },
+    {
+     "nombre": "puedePublicar",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "tipo",
+       "tipo": "TipoPublicacion"
+      }
+     ]
+    },
+    {
+     "nombre": "darDeBaja",
+     "retorno": "void",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Information Expert",
+   "documentacion": "Referencia el userId del servicio de identidad. La reputacion no tiene setter: solo se recalcula desde calificaciones verificadas. Baja logica (activo=false)."
+  },
+  {
+   "nombre": "ElementoCatalogo",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "contiene",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "elemento",
+       "tipo": "ElementoCatalogo"
+      }
+     ],
+     "abstracta": true
+    },
+    {
+     "nombre": "listarHabilidades",
+     "retorno": "List<Habilidad>",
+     "parametros": [],
+     "abstracta": true
+    }
+   ],
+   "abstracta": true,
+   "estereotipo": "Composite · Componente"
+  },
+  {
+   "nombre": "Categoria",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "hijos",
+     "tipo": "List<ElementoCatalogo>"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "agregar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "elemento",
+       "tipo": "ElementoCatalogo"
+      }
+     ]
+    },
+    {
+     "nombre": "quitar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "elemento",
+       "tipo": "ElementoCatalogo"
+      }
+     ]
+    },
+    {
+     "nombre": "contiene",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "elemento",
+       "tipo": "ElementoCatalogo"
+      }
+     ]
+    },
+    {
+     "nombre": "listarHabilidades",
+     "retorno": "List<Habilidad>",
+     "parametros": []
+    },
+    {
+     "nombre": "listarSubcategoriaIds",
+     "retorno": "List<Long>",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Composite · Compuesto"
+  },
+  {
+   "nombre": "Habilidad",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "contiene",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "elemento",
+       "tipo": "ElementoCatalogo"
+      }
+     ]
+    },
+    {
+     "nombre": "listarHabilidades",
+     "retorno": "List<Habilidad>",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Composite · Hoja"
+  },
+  {
+   "nombre": "Publicacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "autor",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "TipoPublicacion"
+    },
+    {
+     "nombre": "titulo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "descripcion",
+     "tipo": "String"
+    },
+    {
+     "nombre": "categoria",
+     "tipo": "Categoria"
+    },
+    {
+     "nombre": "habilidades",
+     "tipo": "List<Habilidad>"
+    },
+    {
+     "nombre": "modalidad",
+     "tipo": "Modalidad"
+    },
+    {
+     "nombre": "duracionMinutos",
+     "tipo": "int"
+    },
+    {
+     "nombre": "cupo",
+     "tipo": "int"
+    },
+    {
+     "nombre": "cuposOcupados",
+     "tipo": "int"
+    },
+    {
+     "nombre": "precioBase",
+     "tipo": "SkillCoins"
+    },
+    {
+     "nombre": "etiquetas",
+     "tipo": "Set<String>"
+    },
+    {
+     "nombre": "franjas",
+     "tipo": "List<FranjaHoraria>"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "EstadoPublicacion"
+    },
+    {
+     "nombre": "nombreEstado",
+     "tipo": "String"
+    },
+    {
+     "nombre": "politicaCancelacion",
+     "tipo": "PoliticaCancelacion"
+    },
+    {
+     "nombre": "promociones",
+     "tipo": "List<Promocion>"
+    },
+    {
+     "nombre": "historial",
+     "tipo": "List<CambioEstado>"
+    },
+    {
+     "nombre": "fechaPublicacion",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "version",
+     "tipo": "long"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "editar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "titulo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "descripcion",
+       "tipo": "String"
+      },
+      {
+       "nombre": "precioBase",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      }
+     ]
+    },
+    {
+     "nombre": "pausar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "reanudar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cerrar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cambiarEstado",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "nuevo",
+       "tipo": "EstadoPublicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "validarPublicable",
+     "retorno": "void",
+     "parametros": []
+    },
+    {
+     "nombre": "admiteSolicitudes",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "reservarCupo",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "liberarCupo",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "agregarFranja",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "agregarPromocion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "promocion",
+       "tipo": "Promocion"
+      }
+     ]
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cotizar",
+     "retorno": "ICalculoPrecio",
+     "parametros": [
+      {
+       "nombre": "fecha",
+       "tipo": "LocalDate"
+      }
+     ]
+    },
+    {
+     "nombre": "calcularPrecio",
+     "retorno": "SkillCoins",
+     "parametros": []
+    },
+    {
+     "nombre": "getDescripcion",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "esAutor",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Contexto / Decorator · Componente concreto",
+   "documentacion": "Invariantes: publicar exige titulo, categoria, precio >= 0 y al menos una franja. @Version evita sobreventa de cupos (optimistic locking). El estado se persiste como nombreEstado y se reconstruye en @PostLoad con EstadoPublicacionFactory."
+  },
+  {
+   "nombre": "FranjaHoraria",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "inicio",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "fin",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "ocupada",
+     "tipo": "boolean"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "ocupar",
+     "retorno": "void",
+     "parametros": []
+    },
+    {
+     "nombre": "liberar",
+     "retorno": "void",
+     "parametros": []
+    },
+    {
+     "nombre": "seSuperponeCon",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "otra",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "estaLibre",
+     "retorno": "boolean",
+     "parametros": []
+    }
+   ]
+  },
+  {
+   "nombre": "EstadoPublicacion",
+   "paquete": "Domain",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pausar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "reanudar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cerrar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esEditable",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "admiteSolicitudes",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "State: rol Estado."
+  },
+  {
+   "nombre": "EstadoPublicacionBase",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pausar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "reanudar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cerrar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esEditable",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "admiteSolicitudes",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "abstracta": true,
+   "estereotipo": "State · Estado base",
+   "documentacion": "Por defecto toda transicion lanza ReglaNegocioException (transicion invalida); cada estado sobrescribe solo lo que permite."
+  },
+  {
+   "nombre": "EstadoBorrador",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esEditable",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoPublicada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "pausar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cerrar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "admiteSolicitudes",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoPausada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "reanudar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cerrar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoCerrada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoPublicacionCancelada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoPublicacionFactory",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "desdeNombre",
+     "retorno": "EstadoPublicacion",
+     "parametros": [
+      {
+       "nombre": "nombre",
+       "tipo": "String"
+      }
+     ],
+     "estatico": true
+    }
+   ],
+   "estereotipo": "Simple Factory",
+   "documentacion": "Reconstruye el estado desde la columna nombreEstado (@PostLoad)."
+  },
+  {
+   "nombre": "PoliticaCancelacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "calcularReintegro",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "pagado",
+       "tipo": "SkillCoins"
+      },
+      {
+       "nombre": "inicio",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cancelacion",
+       "tipo": "LocalDateTime"
+      }
+     ],
+     "abstracta": true
+    }
+   ],
+   "abstracta": true,
+   "estereotipo": "Strategy · Estrategia",
+   "documentacion": "Entidad abstracta con @Inheritance(SINGLE_TABLE): cada publicacion referencia la politica elegida por su autor."
+  },
+  {
+   "nombre": "PoliticaFlexible",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "horasReintegroTotal",
+     "tipo": "int"
+    },
+    {
+     "nombre": "horasReintegroParcial",
+     "tipo": "int"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "calcularReintegro",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "pagado",
+       "tipo": "SkillCoins"
+      },
+      {
+       "nombre": "inicio",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cancelacion",
+       "tipo": "LocalDateTime"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Strategy · Estrategia concreta",
+   "documentacion": "100 % con anticipacion >= horasReintegroTotal (24), 50 % con >= horasReintegroParcial (2), si no 0 %."
+  },
+  {
+   "nombre": "PoliticaEstricta",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "horasReintegroParcial",
+     "tipo": "int"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "calcularReintegro",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "pagado",
+       "tipo": "SkillCoins"
+      },
+      {
+       "nombre": "inicio",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cancelacion",
+       "tipo": "LocalDateTime"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Strategy · Estrategia concreta",
+   "documentacion": "Nunca devuelve el 100 %: 50 % con anticipacion >= horasReintegroParcial (72), si no 0 %."
+  },
+  {
+   "nombre": "ICalculoPrecio",
+   "paquete": "Domain",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "calcularPrecio",
+     "retorno": "SkillCoins",
+     "parametros": []
+    },
+    {
+     "nombre": "getDescripcion",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Decorator: rol Componente."
+  },
+  {
+   "nombre": "PromocionDecorator",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "envuelto",
+     "tipo": "ICalculoPrecio"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "calcularPrecio",
+     "retorno": "SkillCoins",
+     "parametros": []
+    },
+    {
+     "nombre": "getDescripcion",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "aplicar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "precio",
+       "tipo": "SkillCoins"
+      }
+     ],
+     "abstracta": true
+    }
+   ],
+   "abstracta": true,
+   "estereotipo": "Decorator · Decorador",
+   "documentacion": "calcularPrecio() = aplicar(envuelto.calcularPrecio()). Como SkillCoins nunca es negativo, ninguna combinacion de promociones produce un total negativo."
+  },
+  {
+   "nombre": "DescuentoPorcentual",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "porcentaje",
+     "tipo": "int"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "aplicar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "precio",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "getDescripcion",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Decorator · Decorador concreto"
+  },
+  {
+   "nombre": "DescuentoMontoFijo",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "monto",
+     "tipo": "SkillCoins"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "aplicar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "precio",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "getDescripcion",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Decorator · Decorador concreto"
+  },
+  {
+   "nombre": "Promocion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "codigo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "vigenteDesde",
+     "tipo": "LocalDate"
+    },
+    {
+     "nombre": "vigenteHasta",
+     "tipo": "LocalDate"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "estaVigente",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "fecha",
+       "tipo": "LocalDate"
+      }
+     ]
+    },
+    {
+     "nombre": "decorar",
+     "retorno": "ICalculoPrecio",
+     "parametros": [
+      {
+       "nombre": "precio",
+       "tipo": "ICalculoPrecio"
+      }
+     ],
+     "abstracta": true
+    }
+   ],
+   "abstracta": true,
+   "estereotipo": "Creator",
+   "documentacion": "Definicion persistida de la promocion. Cada subclase crea su decorador porque tiene los datos para inicializarlo (Creator); los decoradores no se persisten."
+  },
+  {
+   "nombre": "PromocionPorcentual",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "porcentaje",
+     "tipo": "int"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "decorar",
+     "retorno": "ICalculoPrecio",
+     "parametros": [
+      {
+       "nombre": "precio",
+       "tipo": "ICalculoPrecio"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nombre": "PromocionMontoFijo",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "monto",
+     "tipo": "SkillCoins"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "decorar",
+     "retorno": "ICalculoPrecio",
+     "parametros": [
+      {
+       "nombre": "precio",
+       "tipo": "ICalculoPrecio"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nombre": "Contratacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "publicacion",
+     "tipo": "Publicacion"
+    },
+    {
+     "nombre": "cliente",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "proveedor",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "mensaje",
+     "tipo": "String"
+    },
+    {
+     "nombre": "objetivo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "franja",
+     "tipo": "FranjaHoraria"
+    },
+    {
+     "nombre": "precioAcordado",
+     "tipo": "SkillCoins"
+    },
+    {
+     "nombre": "detallePrecio",
+     "tipo": "String"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "EstadoContratacion"
+    },
+    {
+     "nombre": "nombreEstado",
+     "tipo": "String"
+    },
+    {
+     "nombre": "propuesta",
+     "tipo": "PropuestaReprogramacion"
+    },
+    {
+     "nombre": "historial",
+     "tipo": "List<CambioEstado>"
+    },
+    {
+     "nombre": "calificadaPorCliente",
+     "tipo": "boolean"
+    },
+    {
+     "nombre": "calificadaPorProveedor",
+     "tipo": "boolean"
+    },
+    {
+     "nombre": "version",
+     "tipo": "long"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "nuevaFranja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "calificar",
+     "retorno": "Calificacion",
+     "parametros": [
+      {
+       "nombre": "autorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "puntaje",
+       "tipo": "int"
+      },
+      {
+       "nombre": "comentario",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cambiarEstado",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "nuevo",
+       "tipo": "EstadoContratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "registrarPropuesta",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "nuevaFranja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aplicarPropuesta",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esCliente",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esProveedor",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esParticipante",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "contraparteDe",
+     "retorno": "Perfil",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Contexto",
+   "documentacion": "Se crea con Publicacion.cotizar(): guarda precioAcordado y detallePrecio como foto. El cliente no puede ser el autor. Si cancela el proveedor se reintegra el 100 %; si cancela el cliente decide la PoliticaCancelacion."
+  },
+  {
+   "nombre": "PropuestaReprogramacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "nuevaFranja",
+     "tipo": "FranjaHoraria"
+    },
+    {
+     "nombre": "propuestaPor",
+     "tipo": "String"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "puedeAceptarla",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Value Object",
+   "documentacion": "La acepta solo la contraparte de quien la propuso."
+  },
+  {
+   "nombre": "EstadoContratacion",
+   "paquete": "Domain",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "permiteCalificar",
+     "retorno": "boolean",
+     "parametros": []
+    }
+   ],
+   "documentacion": "State: rol Estado."
+  },
+  {
+   "nombre": "EstadoContratacionBase",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "permiteCalificar",
+     "retorno": "boolean",
+     "parametros": []
+    }
+   ],
+   "abstracta": true,
+   "estereotipo": "State · Estado base",
+   "documentacion": "Por defecto toda accion lanza ReglaNegocioException (transicion invalida)."
+  },
+  {
+   "nombre": "EstadoPendiente",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoAceptada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoConfirmada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoEnCurso",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoCompletada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "permiteCalificar",
+     "retorno": "boolean",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoRechazada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoContratacionCancelada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoContratacionFactory",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "desdeNombre",
+     "retorno": "EstadoContratacion",
+     "parametros": [
+      {
+       "nombre": "nombre",
+       "tipo": "String"
+      }
+     ],
+     "estatico": true
+    }
+   ],
+   "estereotipo": "Simple Factory"
+  },
+  {
+   "nombre": "Billetera",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "titular",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "saldo",
+     "tipo": "SkillCoins"
+    },
+    {
+     "nombre": "movimientos",
+     "tipo": "List<MovimientoCredito>"
+    },
+    {
+     "nombre": "version",
+     "tipo": "long"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "debitar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "monto",
+       "tipo": "SkillCoins"
+      },
+      {
+       "nombre": "concepto",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "acreditar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "monto",
+       "tipo": "SkillCoins"
+      },
+      {
+       "nombre": "tipo",
+       "tipo": "TipoMovimiento"
+      },
+      {
+       "nombre": "concepto",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "tieneSaldo",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "monto",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "yaPago",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Information Expert",
+   "documentacion": "No permite saldo negativo ni un segundo debito para la misma contratacion (ademas de UNIQUE(billetera_id, contratacion_id, tipo) en la base)."
+  },
+  {
+   "nombre": "MovimientoCredito",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "TipoMovimiento"
+    },
+    {
+     "nombre": "monto",
+     "tipo": "SkillCoins"
+    },
+    {
+     "nombre": "concepto",
+     "tipo": "String"
+    },
+    {
+     "nombre": "contratacionId",
+     "tipo": "Long"
+    }
+   ],
+   "operaciones": []
+  },
+  {
+   "nombre": "Calificacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "contratacion",
+     "tipo": "Contratacion"
+    },
+    {
+     "nombre": "autor",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "calificado",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "puntaje",
+     "tipo": "int"
+    },
+    {
+     "nombre": "comentario",
+     "tipo": "String"
+    },
+    {
+     "nombre": "PUNTAJE_MINIMO",
+     "tipo": "int"
+    },
+    {
+     "nombre": "PUNTAJE_MAXIMO",
+     "tipo": "int"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "validarPuntaje",
+     "retorno": "void",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Verificada: solo la crea una Contratacion COMPLETADA, una por participante, y nunca con autor = calificado."
+  },
+  {
+   "nombre": "Notificacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "destinatarioId",
+     "tipo": "String"
+    },
+    {
+     "nombre": "canal",
+     "tipo": "CanalNotificacion"
+    },
+    {
+     "nombre": "tipoEvento",
+     "tipo": "TipoEvento"
+    },
+    {
+     "nombre": "mensaje",
+     "tipo": "String"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "leida",
+     "tipo": "boolean"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "marcarLeida",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nombre": "EventoContratacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "tipo",
+     "tipo": "TipoEvento"
+    },
+    {
+     "nombre": "contratacionId",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "clienteId",
+     "tipo": "String"
+    },
+    {
+     "nombre": "proveedorId",
+     "tipo": "String"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "de",
+     "retorno": "EventoContratacion",
+     "parametros": [
+      {
+       "nombre": "contratacion",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "tipo",
+       "tipo": "TipoEvento"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "destinatarios",
+     "retorno": "List<String>",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Evento de dominio",
+   "documentacion": "Sabe a quien le interesa cada tipo de evento (Information Expert): solicitud recibida -> proveedor, aceptacion -> cliente, etc."
+  }
+ ],
+ "relaciones": [
+  {
+   "tipo": "realizacion",
+   "origen": "BusquedaControllerImpl",
+   "destino": "BusquedaController"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "BusquedaControllerImpl",
+   "destino": "IBusquedaService",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "BusquedaControllerImpl",
+   "destino": "IRecomendacionService",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "BusquedaControllerImpl",
+   "destino": "EjecutorDeAcciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "delega errores en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "BusquedaControllerImpl",
+   "destino": "Conversor",
+   "nombre": "convierte con"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PublicacionControllerImpl",
+   "destino": "PublicacionController"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PublicacionControllerImpl",
+   "destino": "IPublicacionService",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PublicacionControllerImpl",
+   "destino": "IBusquedaService",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PublicacionControllerImpl",
+   "destino": "EjecutorDeAcciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "delega errores en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PublicacionControllerImpl",
+   "destino": "Conversor",
+   "nombre": "convierte con"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "ContratacionControllerImpl",
+   "destino": "ContratacionController"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionControllerImpl",
+   "destino": "IContratacionService",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionControllerImpl",
+   "destino": "EjecutorDeAcciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "delega errores en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ContratacionControllerImpl",
+   "destino": "Conversor",
+   "nombre": "convierte con"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "WalletControllerImpl",
+   "destino": "WalletController"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "WalletControllerImpl",
+   "destino": "IBilleteraService",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "WalletControllerImpl",
+   "destino": "EjecutorDeAcciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "delega errores en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "WalletControllerImpl",
+   "destino": "Conversor",
+   "nombre": "convierte con"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "NotificacionControllerImpl",
+   "destino": "NotificacionController"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "NotificacionControllerImpl",
+   "destino": "INotificacionService",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "NotificacionControllerImpl",
+   "destino": "EjecutorDeAcciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "delega errores en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "NotificacionControllerImpl",
+   "destino": "Conversor",
+   "nombre": "convierte con"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PerfilControllerImpl",
+   "destino": "PerfilController"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PerfilControllerImpl",
+   "destino": "IPerfilService",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PerfilControllerImpl",
+   "destino": "EjecutorDeAcciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "delega errores en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PerfilControllerImpl",
+   "destino": "Conversor",
+   "nombre": "convierte con"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "EjecutorDeAcciones",
+   "destino": "IServicioIdentidad",
+   "mult_origen": "1",
+   "mult_destino": "1",
+   "nombre": "valida usuario con",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PublicacionControllerImpl",
+   "destino": "ModalidadUi",
+   "nombre": "traduce modalidad con"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "SkillSwapControllers",
+   "destino": "UiControllers"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "MockSkillSwapControllers",
+   "destino": "UiControllers"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "SkillSwapControllers",
+   "destino": "BusquedaController",
+   "mult_origen": "1",
+   "mult_destino": "1",
+   "nombre": "agrupa Busqueda",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "SkillSwapControllers",
+   "destino": "PublicacionController",
+   "mult_origen": "1",
+   "mult_destino": "1",
+   "nombre": "agrupa Publicacion",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "SkillSwapControllers",
+   "destino": "ContratacionController",
+   "mult_origen": "1",
+   "mult_destino": "1",
+   "nombre": "agrupa Contratacion",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "SkillSwapControllers",
+   "destino": "WalletController",
+   "mult_origen": "1",
+   "mult_destino": "1",
+   "nombre": "agrupa Wallet",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "SkillSwapControllers",
+   "destino": "NotificacionController",
+   "mult_origen": "1",
+   "mult_destino": "1",
+   "nombre": "agrupa Notificacion",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "SkillSwapControllers",
+   "destino": "PerfilController",
+   "mult_origen": "1",
+   "mult_destino": "1",
+   "nombre": "agrupa Perfil",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "SkillSwapView",
+   "destino": "UiControllers",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "invoca",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PerfilService",
+   "destino": "IPerfilService"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PerfilService",
+   "destino": "IPerfilRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PerfilService",
+   "destino": "IPublicacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PerfilService",
+   "destino": "IContratacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PerfilService",
+   "destino": "ICatalogoRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PerfilService",
+   "destino": "IBilleteraRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PerfilService",
+   "destino": "IGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "ejecuta en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PublicacionService",
+   "destino": "IPublicacionService"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PublicacionService",
+   "destino": "IPublicacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PublicacionService",
+   "destino": "IPerfilRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PublicacionService",
+   "destino": "ICatalogoRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PublicacionService",
+   "destino": "IPoliticaCancelacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PublicacionService",
+   "destino": "IGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "ejecuta en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "BusquedaService",
+   "destino": "IBusquedaService"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "BusquedaService",
+   "destino": "IPublicacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "BusquedaService",
+   "destino": "ICatalogoRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "RecomendacionService",
+   "destino": "IRecomendacionService"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "RecomendacionService",
+   "destino": "IEstrategiaRecomendacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "utiliza",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "RecomendacionService",
+   "destino": "IPerfilRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "RecomendacionService",
+   "destino": "IPublicacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "ContratacionService",
+   "destino": "IContratacionService"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionService",
+   "destino": "IContratacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionService",
+   "destino": "IPublicacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionService",
+   "destino": "IPerfilRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionService",
+   "destino": "IBilleteraRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionService",
+   "destino": "IGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "ejecuta en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionService",
+   "destino": "IPublicadorEventos",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "publica en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "CalificacionService",
+   "destino": "ICalificacionService"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "CalificacionService",
+   "destino": "IContratacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "CalificacionService",
+   "destino": "ICalificacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "CalificacionService",
+   "destino": "IGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "ejecuta en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "CalificacionService",
+   "destino": "IPublicadorEventos",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "publica en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "NotificacionService",
+   "destino": "INotificacionService"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "NotificacionService",
+   "destino": "INotificacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "BilleteraService",
+   "destino": "IBilleteraService"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "BilleteraService",
+   "destino": "IBilleteraRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "accede a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "BilleteraDto",
+   "parte": "MovimientoDto",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "detalla"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "PerfilPublicoDto",
+   "parte": "PublicacionDto",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "muestra"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Pagina<T>",
+   "parte": "PublicacionDto",
+   "mult_todo": "0..1",
+   "mult_parte": "0..*",
+   "nombre": "contiene"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "FiltroBusqueda",
+   "destino": "CriterioOrden",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "ordena por",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "CambiarEstadoCommand",
+   "destino": "AccionPublicacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "indica",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "AccionPublicacion",
+   "destino": "Publicacion",
+   "nombre": "invoca"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PublicadorEventos",
+   "destino": "IPublicadorEventos"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "NotificacionObserver",
+   "destino": "IEventoObserver"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "ReputacionObserver",
+   "destino": "IEventoObserver"
+  },
+  {
+   "tipo": "agregacion",
+   "todo": "PublicadorEventos",
+   "parte": "IEventoObserver",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "notifica a"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "NotificacionObserver",
+   "destino": "IPerfilRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "consulta preferencias en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "NotificacionObserver",
+   "destino": "ICanalNotificacionFactory",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "obtiene canales de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "NotificacionObserver",
+   "destino": "ICanalNotificacion",
+   "nombre": "envia por"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ReputacionObserver",
+   "destino": "IPerfilRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "actualiza",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ReputacionObserver",
+   "destino": "ICalificacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "lee calificaciones de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ICanalNotificacionFactory",
+   "destino": "ICanalNotificacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "AfinidadPorHabilidades",
+   "destino": "IEstrategiaRecomendacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PopularidadReciente",
+   "destino": "IEstrategiaRecomendacion"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PopularidadReciente",
+   "destino": "IContratacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "cuenta contrataciones en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "JpaGestorTransacciones",
+   "destino": "ConflictoConcurrenciaException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "JpaGestorTransacciones",
+   "destino": "IGestorTransacciones"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PerfilJpaRepository",
+   "destino": "IPerfilRepository"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PerfilJpaRepository",
+   "destino": "JpaGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa EntityManager de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PublicacionJpaRepository",
+   "destino": "IPublicacionRepository"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PublicacionJpaRepository",
+   "destino": "JpaGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa EntityManager de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "ContratacionJpaRepository",
+   "destino": "IContratacionRepository"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionJpaRepository",
+   "destino": "JpaGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa EntityManager de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "BilleteraJpaRepository",
+   "destino": "IBilleteraRepository"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "BilleteraJpaRepository",
+   "destino": "JpaGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa EntityManager de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "CalificacionJpaRepository",
+   "destino": "ICalificacionRepository"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "CalificacionJpaRepository",
+   "destino": "JpaGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa EntityManager de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "NotificacionJpaRepository",
+   "destino": "INotificacionRepository"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "NotificacionJpaRepository",
+   "destino": "JpaGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa EntityManager de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "CatalogoJpaRepository",
+   "destino": "ICatalogoRepository"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "CatalogoJpaRepository",
+   "destino": "JpaGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa EntityManager de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PoliticaCancelacionJpaRepository",
+   "destino": "IPoliticaCancelacionRepository"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PoliticaCancelacionJpaRepository",
+   "destino": "JpaGestorTransacciones",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa EntityManager de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ConfiguracionApp",
+   "destino": "SkillSwapControllers",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ConfiguracionApp",
+   "destino": "PublicadorEventos",
+   "nombre": "arma"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "SkillSwapApplication",
+   "destino": "ConfiguracionApp",
+   "nombre": "usa"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "SkillSwapApplication",
+   "destino": "PersistenceFactory",
+   "nombre": "abre la base con"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "SkillSwapApplication",
+   "destino": "SkillSwapView",
+   "nombre": "muestra"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "IdentidadAdapter",
+   "destino": "IServicioIdentidad"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "IdentidadAdapter",
+   "destino": "IdentityClientMock",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "traduce a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EmailAdapter",
+   "destino": "ICanalNotificacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PushAdapter",
+   "destino": "ICanalNotificacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "CanalInterno",
+   "destino": "ICanalNotificacion"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "EmailAdapter",
+   "destino": "EmailClientMock",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "traduce a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "EmailAdapter",
+   "destino": "IServicioIdentidad",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "obtiene email de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PushAdapter",
+   "destino": "PushClientMock",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "traduce a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "CanalInterno",
+   "destino": "INotificacionRepository",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "guarda en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "CanalNotificacionFactory",
+   "destino": "ICanalNotificacionFactory"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "CanalNotificacionFactory",
+   "destino": "EmailAdapter",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "CanalNotificacionFactory",
+   "destino": "PushAdapter",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "CanalNotificacionFactory",
+   "destino": "CanalInterno",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Perfil",
+   "destino": "TipoPerfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "es de tipo",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "agregacion",
+   "todo": "Perfil",
+   "parte": "Habilidad",
+   "mult_todo": "0..*",
+   "mult_parte": "0..*",
+   "nombre": "domina"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Perfil",
+   "destino": "Habilidad",
+   "mult_origen": "0..*",
+   "mult_destino": "0..*",
+   "nombre": "le interesa",
+   "rol_destino": "intereses"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Perfil",
+   "parte": "RangoHorario",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "disponible en"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Perfil",
+   "destino": "CanalNotificacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1..*",
+   "nombre": "prefiere",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Perfil",
+   "destino": "Calificacion",
+   "nombre": "recalcula con"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "Categoria",
+   "destino": "ElementoCatalogo"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "Habilidad",
+   "destino": "ElementoCatalogo"
+  },
+  {
+   "tipo": "agregacion",
+   "todo": "Categoria",
+   "parte": "ElementoCatalogo",
+   "mult_todo": "0..1",
+   "mult_parte": "0..*",
+   "nombre": "agrupa"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "Perfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "publicada por",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "TipoPublicacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "es de tipo",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "Categoria",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "clasificada en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "Habilidad",
+   "mult_origen": "0..*",
+   "mult_destino": "0..*",
+   "nombre": "trabaja",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "Modalidad",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "se dicta en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Publicacion",
+   "parte": "FranjaHoraria",
+   "mult_todo": "1",
+   "mult_parte": "1..*",
+   "nombre": "ofrece"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Publicacion",
+   "parte": "CambioEstado",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "registra"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "PoliticaCancelacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "aplica",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Publicacion",
+   "parte": "Promocion",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "incluye"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "EstadoPublicacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "se encuentra en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Publicacion",
+   "destino": "EstadoPublicacionFactory",
+   "nombre": "reconstruye estado con"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoPublicacionBase",
+   "destino": "EstadoPublicacion"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoBorrador",
+   "destino": "EstadoPublicacionBase"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoPublicada",
+   "destino": "EstadoPublicacionBase"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoPausada",
+   "destino": "EstadoPublicacionBase"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoCerrada",
+   "destino": "EstadoPublicacionBase"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoPublicacionCancelada",
+   "destino": "EstadoPublicacionBase"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EstadoPublicacionFactory",
+   "destino": "EstadoPublicacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "PoliticaFlexible",
+   "destino": "PoliticaCancelacion"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "PoliticaEstricta",
+   "destino": "PoliticaCancelacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "Publicacion",
+   "destino": "ICalculoPrecio"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PromocionDecorator",
+   "destino": "ICalculoPrecio"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "DescuentoPorcentual",
+   "destino": "PromocionDecorator"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "DescuentoMontoFijo",
+   "destino": "PromocionDecorator"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PromocionDecorator",
+   "destino": "ICalculoPrecio",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "envuelve",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "herencia",
+   "origen": "PromocionPorcentual",
+   "destino": "Promocion"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "PromocionMontoFijo",
+   "destino": "Promocion"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PromocionPorcentual",
+   "destino": "DescuentoPorcentual",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PromocionMontoFijo",
+   "destino": "DescuentoMontoFijo",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Contratacion",
+   "destino": "Publicacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "contrata",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Contratacion",
+   "destino": "Perfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "solicitada por",
+   "rol_destino": "cliente"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Contratacion",
+   "destino": "Perfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "prestada por",
+   "rol_destino": "proveedor"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Contratacion",
+   "destino": "FranjaHoraria",
+   "mult_origen": "0..1",
+   "mult_destino": "1",
+   "nombre": "reserva",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Contratacion",
+   "parte": "PropuestaReprogramacion",
+   "mult_todo": "1",
+   "mult_parte": "0..1",
+   "nombre": "tiene pendiente"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PropuestaReprogramacion",
+   "destino": "FranjaHoraria",
+   "mult_origen": "0..1",
+   "mult_destino": "1",
+   "nombre": "propone",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Contratacion",
+   "parte": "CambioEstado",
+   "mult_todo": "1",
+   "mult_parte": "1..*",
+   "nombre": "registra"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Contratacion",
+   "destino": "EstadoContratacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "se encuentra en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Contratacion",
+   "destino": "Calificacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Contratacion",
+   "destino": "Billetera",
+   "nombre": "debita y acredita"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Contratacion",
+   "destino": "EstadoContratacionFactory",
+   "nombre": "reconstruye estado con"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoContratacionBase",
+   "destino": "EstadoContratacion"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoPendiente",
+   "destino": "EstadoContratacionBase"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoAceptada",
+   "destino": "EstadoContratacionBase"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoConfirmada",
+   "destino": "EstadoContratacionBase"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoEnCurso",
+   "destino": "EstadoContratacionBase"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoCompletada",
+   "destino": "EstadoContratacionBase"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoRechazada",
+   "destino": "EstadoContratacionBase"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "EstadoContratacionCancelada",
+   "destino": "EstadoContratacionBase"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EstadoContratacionFactory",
+   "destino": "EstadoContratacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Billetera",
+   "destino": "Perfil",
+   "mult_origen": "0..1",
+   "mult_destino": "1",
+   "nombre": "pertenece a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Billetera",
+   "parte": "MovimientoCredito",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "registra"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "MovimientoCredito",
+   "destino": "TipoMovimiento",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "es de tipo",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Calificacion",
+   "destino": "Contratacion",
+   "mult_origen": "0..2",
+   "mult_destino": "1",
+   "nombre": "califica",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Calificacion",
+   "destino": "Perfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "escrita por",
+   "rol_destino": "autor"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Calificacion",
+   "destino": "Perfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "dirigida a",
+   "rol_destino": "calificado"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Notificacion",
+   "destino": "TipoEvento",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "informa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Notificacion",
+   "destino": "CanalNotificacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "se envia por",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "EventoContratacion",
+   "destino": "TipoEvento",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "es de tipo",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EventoContratacion",
+   "destino": "Contratacion",
+   "nombre": "se crea desde"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "NotificacionObserver",
+   "destino": "Notificacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Publicacion",
+   "parte": "SkillCoins",
+   "mult_todo": "1",
+   "mult_parte": "1",
+   "nombre": "precio base"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Contratacion",
+   "parte": "SkillCoins",
+   "mult_todo": "1",
+   "mult_parte": "1",
+   "nombre": "precio acordado"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Billetera",
+   "parte": "SkillCoins",
+   "mult_todo": "1",
+   "mult_parte": "1",
+   "nombre": "saldo"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "MovimientoCredito",
+   "parte": "SkillCoins",
+   "mult_todo": "1",
+   "mult_parte": "1",
+   "nombre": "monto"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EstadoPublicacionBase",
+   "destino": "ReglaNegocioException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EstadoContratacionBase",
+   "destino": "ReglaNegocioException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "SkillCoins",
+   "destino": "ReglaNegocioException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Billetera",
+   "destino": "ReglaNegocioException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Publicacion",
+   "destino": "ReglaNegocioException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Contratacion",
+   "destino": "ReglaNegocioException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ContratacionService",
+   "destino": "RecursoNoEncontradoException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ContratacionService",
+   "destino": "AccesoDenegadoException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PublicacionService",
+   "destino": "RecursoNoEncontradoException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PublicacionService",
+   "destino": "AccesoDenegadoException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "CalificacionService",
+   "destino": "RecursoNoEncontradoException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "CalificacionService",
+   "destino": "AccesoDenegadoException",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EjecutorDeAcciones",
+   "destino": "ReglaNegocioException",
+   "nombre": "traduce"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EjecutorDeAcciones",
+   "destino": "RecursoNoEncontradoException",
+   "nombre": "traduce"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EjecutorDeAcciones",
+   "destino": "AccesoDenegadoException",
+   "nombre": "traduce"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EjecutorDeAcciones",
+   "destino": "ErrorDeAplicacion",
+   "nombre": "lanza"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EjecutorDeAcciones",
+   "destino": "ConflictoConcurrenciaException",
+   "nombre": "traduce"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PerfilService",
+   "destino": "PerfilCommand",
+   "nombre": "recibe"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PerfilService",
+   "destino": "PerfilPublicoDto",
+   "nombre": "devuelve"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PublicacionService",
+   "destino": "PublicacionCommand",
+   "nombre": "recibe"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PublicacionService",
+   "destino": "CambiarEstadoCommand",
+   "nombre": "recibe"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "BusquedaService",
+   "destino": "FiltroBusqueda",
+   "nombre": "recibe"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "BusquedaService",
+   "destino": "Pagina<T>",
+   "nombre": "devuelve"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "RecomendacionService",
+   "destino": "Pagina<T>",
+   "nombre": "devuelve"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ContratacionService",
+   "destino": "SolicitarCommand",
+   "nombre": "recibe"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ContratacionService",
+   "destino": "ContratacionDto",
+   "nombre": "devuelve"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "CalificacionService",
+   "destino": "CalificarCommand",
+   "nombre": "recibe"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "NotificacionService",
+   "destino": "NotificacionDto",
+   "nombre": "devuelve"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "BilleteraService",
+   "destino": "BilleteraDto",
+   "nombre": "devuelve"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ContratacionService",
+   "destino": "EventoContratacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ContratacionService",
+   "destino": "Contratacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PublicacionService",
+   "destino": "Publicacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "IEventoObserver",
+   "destino": "EventoContratacion",
+   "nombre": "recibe"
+  }
+ ],
+ "diagramas": [
+  {
+   "nombre": "Capa Dominio",
+   "paquetes": [
+    "Domain"
+   ]
+  },
+  {
+   "nombre": "Capa Aplicacion",
+   "paquetes": [
+    "Application"
+   ]
+  },
+  {
+   "nombre": "Capa Infraestructura",
+   "paquetes": [
+    "Infrastructure"
+   ],
+   "clases": [
+    "IPerfilRepository",
+    "IPublicacionRepository",
+    "IContratacionRepository",
+    "IBilleteraRepository",
+    "ICalificacionRepository",
+    "INotificacionRepository",
+    "ICatalogoRepository",
+    "IPoliticaCancelacionRepository",
+    "IGestorTransacciones",
+    "IServicioIdentidad",
+    "ICanalNotificacion",
+    "ICanalNotificacionFactory"
+   ]
+  },
+  {
+   "nombre": "Capa Presentacion",
+   "paquetes": [
+    "Presentation"
+   ],
+   "clases": [
+    "IPerfilService",
+    "IPublicacionService",
+    "IBusquedaService",
+    "IRecomendacionService",
+    "IContratacionService",
+    "ICalificacionService",
+    "INotificacionService",
+    "IBilleteraService",
+    "IServicioIdentidad"
+   ]
+  },
+  {
+   "nombre": "Patron State - Publicacion",
+   "clases": [
+    "Publicacion",
+    "EstadoPublicacion",
+    "EstadoPublicacionBase",
+    "EstadoBorrador",
+    "EstadoPublicada",
+    "EstadoPausada",
+    "EstadoCerrada",
+    "EstadoPublicacionCancelada",
+    "EstadoPublicacionFactory",
+    "CambioEstado"
+   ]
+  },
+  {
+   "nombre": "Patron State - Contratacion",
+   "clases": [
+    "Contratacion",
+    "EstadoContratacion",
+    "EstadoContratacionBase",
+    "EstadoPendiente",
+    "EstadoAceptada",
+    "EstadoConfirmada",
+    "EstadoEnCurso",
+    "EstadoCompletada",
+    "EstadoRechazada",
+    "EstadoContratacionCancelada",
+    "EstadoContratacionFactory",
+    "CambioEstado",
+    "PropuestaReprogramacion"
+   ]
+  },
+  {
+   "nombre": "Patron Strategy",
+   "clases": [
+    "RecomendacionService",
+    "IRecomendacionService",
+    "IEstrategiaRecomendacion",
+    "AfinidadPorHabilidades",
+    "PopularidadReciente",
+    "IContratacionRepository",
+    "Publicacion",
+    "PoliticaCancelacion",
+    "PoliticaFlexible",
+    "PoliticaEstricta"
+   ]
+  },
+  {
+   "nombre": "Patron Decorator",
+   "clases": [
+    "ICalculoPrecio",
+    "Publicacion",
+    "PromocionDecorator",
+    "DescuentoPorcentual",
+    "DescuentoMontoFijo",
+    "Promocion",
+    "PromocionPorcentual",
+    "PromocionMontoFijo",
+    "SkillCoins"
+   ]
+  },
+  {
+   "nombre": "Patron Observer",
+   "clases": [
+    "ContratacionService",
+    "CalificacionService",
+    "IPublicadorEventos",
+    "PublicadorEventos",
+    "IEventoObserver",
+    "NotificacionObserver",
+    "ReputacionObserver",
+    "EventoContratacion",
+    "TipoEvento",
+    "ICanalNotificacionFactory",
+    "ICanalNotificacion",
+    "Notificacion"
+   ]
+  },
+  {
+   "nombre": "Patron Adapter y Simple Factory",
+   "clases": [
+    "IServicioIdentidad",
+    "IdentidadAdapter",
+    "IdentityClientMock",
+    "ICanalNotificacion",
+    "EmailAdapter",
+    "EmailClientMock",
+    "PushAdapter",
+    "PushClientMock",
+    "CanalInterno",
+    "ICanalNotificacionFactory",
+    "CanalNotificacionFactory",
+    "INotificacionRepository",
+    "EjecutorDeAcciones"
+   ]
+  },
+  {
+   "nombre": "Patron Composite",
+   "clases": [
+    "ElementoCatalogo",
+    "Categoria",
+    "Habilidad",
+    "Publicacion",
+    "Perfil",
+    "BusquedaService",
+    "ICatalogoRepository"
+   ]
+  },
+  {
+   "nombre": "Recorrido principal",
+   "clases": [
+    "ContratacionControllerImpl",
+    "ContratacionController",
+    "IContratacionService",
+    "ContratacionService",
+    "IContratacionRepository",
+    "IBilleteraRepository",
+    "IGestorTransacciones",
+    "IPublicadorEventos",
+    "Contratacion",
+    "Publicacion",
+    "Billetera",
+    "EstadoContratacion",
+    "EventoContratacion",
+    "Calificacion"
+   ]
+  }
+ ]
+}

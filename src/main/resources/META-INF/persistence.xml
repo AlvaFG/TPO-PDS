@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Unidad de persistencia de SkillSwap (RESOURCE_LOCAL, sin Spring).
+  La crea PersistenceFactory despues de correr las migraciones de Flyway: Hibernate solo valida el esquema.
+  Conexion por defecto: el MySQL 8 de docker-compose.yml (base, usuario y clave "skillswap").
+  Las pruebas reemplazan url, usuario, clave y driver por un H2 en memoria en modo MySQL
+  (ver PersistenceFactory.crear(url, usuario, clave)).
+-->
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+    <persistence-unit name="skillswap" transaction-type="RESOURCE_LOCAL">
+
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <class>ar.edu.uade.skillswap.domain.model.Perfil</class>
+        <class>ar.edu.uade.skillswap.domain.model.Publicacion</class>
+        <class>ar.edu.uade.skillswap.domain.model.FranjaHoraria</class>
+        <class>ar.edu.uade.skillswap.domain.model.Contratacion</class>
+        <class>ar.edu.uade.skillswap.domain.model.Billetera</class>
+        <class>ar.edu.uade.skillswap.domain.model.MovimientoCredito</class>
+        <class>ar.edu.uade.skillswap.domain.model.Calificacion</class>
+        <class>ar.edu.uade.skillswap.domain.model.Notificacion</class>
+        <class>ar.edu.uade.skillswap.domain.model.SkillCoins</class>
+        <class>ar.edu.uade.skillswap.domain.model.CambioEstado</class>
+        <class>ar.edu.uade.skillswap.domain.model.RangoHorario</class>
+        <class>ar.edu.uade.skillswap.domain.model.PropuestaReprogramacion</class>
+        <class>ar.edu.uade.skillswap.domain.catalogo.ElementoCatalogo</class>
+        <class>ar.edu.uade.skillswap.domain.catalogo.Categoria</class>
+        <class>ar.edu.uade.skillswap.domain.catalogo.Habilidad</class>
+        <class>ar.edu.uade.skillswap.domain.politica.PoliticaCancelacion</class>
+        <class>ar.edu.uade.skillswap.domain.politica.PoliticaFlexible</class>
+        <class>ar.edu.uade.skillswap.domain.politica.PoliticaEstricta</class>
+        <class>ar.edu.uade.skillswap.domain.precio.Promocion</class>
+        <class>ar.edu.uade.skillswap.domain.precio.PromocionPorcentual</class>
+        <class>ar.edu.uade.skillswap.domain.precio.PromocionMontoFijo</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.url"
+                      value="jdbc:mysql://localhost:3306/skillswap?serverTimezone=UTC"/>
+            <property name="jakarta.persistence.jdbc.user" value="skillswap"/>
+            <property name="jakarta.persistence.jdbc.password" value="skillswap"/>
+
+            <!-- El esquema lo crean las migraciones de Flyway; Hibernate solo lo valida -->
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <!-- Columnas en snake_case: nombreEstado -> nombre_estado -->
+            <property name="hibernate.physical_naming_strategy"
+                      value="org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy"/>
+            <!-- Las colecciones LAZY que se recorren se cargan de a lotes (IN) y no una por fila: evita N+1 -->
+            <property name="hibernate.default_batch_fetch_size" value="50"/>
+            <property name="hibernate.show_sql" value="false"/>
+        </properties>
+
+    </persistence-unit>
+
+</persistence>
