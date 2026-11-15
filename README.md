@@ -4,6 +4,20 @@ Marketplace de talento (mentorías, servicios y desafíos) que se paga con créd
 
 La interfaz Swing es la del Mock UI Kit de la cátedra. Este proyecto implementa los controllers reales detrás de las interfaces del kit y los conecta con los casos de uso y la persistencia.
 
+## Guía de estudio
+
+La carpeta [`estudio/`](estudio/README.md) explica la aplicación para entenderla y defenderla: de qué trata, qué hay en cada carpeta, las capas, los 7 patrones (y cómo se relacionan con lo visto en clase), el recorrido de una contratación clase por clase, la base de datos y JPA, las librerías, las pruebas, por qué hay código Python, la consigna punto por punto y preguntas de defensa.
+
+| Para saber… | Leer |
+|---|---|
+| De qué trata y para qué sirve | [`estudio/01-que-es-la-aplicacion.md`](estudio/01-que-es-la-aplicacion.md) |
+| Dónde está cada cosa | [`estudio/02-mapa-de-carpetas.md`](estudio/02-mapa-de-carpetas.md) |
+| Cómo funciona por dentro | [`estudio/03-arquitectura.md`](estudio/03-arquitectura.md), [`estudio/05-recorrido-de-punta-a-punta.md`](estudio/05-recorrido-de-punta-a-punta.md) |
+| Qué patrones se usan | [`estudio/04-patrones-de-diseno.md`](estudio/04-patrones-de-diseno.md) |
+| Cómo se conecta con MySQL | [`estudio/06-base-de-datos-y-jpa.md`](estudio/06-base-de-datos-y-jpa.md) |
+| Para qué es el código Python | [`estudio/09-codigo-python-y-diagramas.md`](estudio/09-codigo-python-y-diagramas.md) |
+| Qué preguntarán en la defensa | [`estudio/11-preguntas-de-defensa.md`](estudio/11-preguntas-de-defensa.md) |
+
 ## Requisitos
 
 | Herramienta | Versión | Para qué |
