@@ -17,6 +17,7 @@ Se lee en orden. Cada archivo se entiende solo, pero el orden va de lo general a
 | 9 | [09-codigo-python-y-diagramas.md](09-codigo-python-y-diagramas.md) | **Por qué hay Python** en el repo y qué es cada archivo |
 | 10 | [10-consigna-vs-implementacion.md](10-consigna-vs-implementacion.md) | Cada punto de la consigna y dónde se cumple; lo que quedó afuera |
 | 11 | [11-preguntas-de-defensa.md](11-preguntas-de-defensa.md) | Preguntas probables de la defensa, con respuesta corta y dónde mirar |
+| 12 | [12-guion-de-demo.md](12-guion-de-demo.md) | Guion de la demo en vivo (~8 min): preparación, clics, qué decir y cómo cubrir los 10 casos |
 
 ## Si hay poco tiempo
 
