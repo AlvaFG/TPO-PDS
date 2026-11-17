@@ -25,6 +25,8 @@ RUTAS = {}      # id(relacion) -> puntos "x:y;x:y;..."
 def vecinos(spec, nombres):
     v = {n: set() for n in nombres}
     for r in spec["relaciones"]:
+        if r["tipo"] in cm.EXCLUIR_TIPOS:
+            continue
         a, b = ((r["parte"], r["todo"]) if r["tipo"] in ("agregacion", "composicion")
                 else (r["origen"], r["destino"]))
         if a in v and b in v and a != b:
@@ -148,6 +150,8 @@ def enrutar(spec, nombres, pos):
 
     pares = []
     for r in spec["relaciones"]:
+        if r["tipo"] in cm.EXCLUIR_TIPOS:
+            continue
         a, b = ((r["parte"], r["todo"]) if r["tipo"] in ("agregacion", "composicion")
                 else (r["origen"], r["destino"]))
         if a in pos and b in pos and a != b:

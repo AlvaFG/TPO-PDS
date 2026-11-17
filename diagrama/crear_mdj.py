@@ -631,6 +631,9 @@ def vista_paquete(ids, paquete_elem, diagrama_id, geom):
             "nameCompartment": ref(ncid)}
 
 
+EXCLUIR_TIPOS = set()
+
+
 def diagramas_del_spec(spec):
     """El diagrama principal lleva todas las clases (o las de 'principal' si se define); 'diagramas' agrega vistas parciales."""
     todas = [c["nombre"] for c in spec["clases"]]
@@ -656,6 +659,9 @@ def generar(spec, ancho_lienzo=1200):
     for i, (nombre_diag, nombres) in enumerate(diagramas_del_spec(spec)):
         id_diagrama = ids.nuevo()
         incluidas = set(nombres)
+        # Del diagrama principal se pueden omitir tipos de relacion ('principal_sin_tipos') para que se lea.
+        global EXCLUIR_TIPOS
+        EXCLUIR_TIPOS = set(spec.get("principal_sin_tipos", [])) if i == 0 else set()
         pos, marcos = posicionar(spec, incluidas, ancho_lienzo)
 
         # Los marcos van primero en ownedViews para quedar detras de las clases.
@@ -678,6 +684,8 @@ def generar(spec, ancho_lienzo=1200):
                 na, nb = r["parte"], r["todo"]
             else:
                 na, nb = r["origen"], r["destino"]
+            if r["tipo"] in EXCLUIR_TIPOS:
+                continue
             if na in incluidas and nb in incluidas:
                 vistas.append(vista_relacion(ids, r, rel, id_diagrama, por_clase,
                                              pos, na, nb))

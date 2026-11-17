@@ -11,7 +11,7 @@ Entregables:
 | `src/` y `pom.xml` | Código fuente (dominio, aplicación, infraestructura y presentación) y pruebas |
 | `README.md` | Cómo levantar MySQL, correr la aplicación y las pruebas, y la tabla de casos de aceptación contra pruebas |
 | `docker-compose.yml` | MySQL local para el modo real |
-| `skillswap.mdj` | Modelo UML en StarUML sincronizado con el código: diagrama `Main` resumido (dominio y casos de uso) y 12 vistas, por capa, por patrón y del recorrido principal |
+| `skillswap.mdj` | Modelo UML en StarUML sincronizado con el código: diagrama `Main` completo y 12 vistas, por capa, por patrón y del recorrido principal |
 | `informe.pdf` | Este informe: alcance, historias, modelo de dominio, arquitectura, decisiones de diseño y su evidencia en código y pruebas |
 | `img/` | Exportación PNG de cada diagrama |
 
@@ -140,7 +140,6 @@ La consigna pide al menos cuatro patrones, justificados por variaciones reales. 
   - Una clase base abstracta (`EstadoPublicacionBase`, `EstadoContratacionBase`) donde **toda** acción lanza `ReglaNegocioException("transición inválida")`.
   - Un estado concreto por fila de la tabla, que redefine solo las acciones válidas. Por ejemplo, `EstadoAceptada` redefine `pagar`, `cancelar`, `proponerReprogramacion` y `aceptarReprogramacion`.
   - El contexto (`Publicacion`, `Contratacion`) delega: `contratacion.pagar(...)` llama a `estado.pagar(this, ...)`. El estado concreto ejecuta la regla y llama a `c.cambiarEstado(new EstadoConfirmada(), actor, motivo)`. `cambiarEstado` deja el `CambioEstado` en el historial.
-- **Nota sobre el diagrama.** Para que se lea mejor, las vistas de State muestran solo la interfaz, los estados concretos y el contexto. La clase base abstracta y la factory existen en el código (`EstadoXBase`, `EstadoXFactory`) y se describen en este informe, pero no están dibujadas.
 - **Persistencia.** Como en Magic Café, se guarda `nombreEstado` (String). El objeto estado es `@Transient` y se reconstruye en `@PostLoad` con `EstadoXFactory.desdeNombre(...)` (Simple Factory).
 - **Consecuencias.**
   - (+) Agregar un estado es agregar una clase. Las transiciones inválidas se rechazan solas, por defecto.
@@ -345,7 +344,7 @@ El archivo `skillswap.mdj` contiene **150 clasificadores y 240 relaciones**:
 
 | Diagrama | Contenido |
 |---|---|
-| `Main` | Vista resumida: entidades y value objects del dominio, jerarquías de estados, políticas, promociones, catálogo, y las interfaces de servicio y de puertos principales. El detalle (servicios, DTOs, repositorios, adapters y controllers) está en las vistas por capa |
+| `Main` | Modelo completo, con las cuatro capas como paquetes |
 | `Capa Dominio`, `Capa Aplicacion`, `Capa Infraestructura`, `Capa Presentacion` | Una capa por vista, junto con los puertos que implementa o usa |
 | `Patron State - Publicacion`, `Patron State - Contratacion`, `Patron Strategy`, `Patron Decorator`, `Patron Observer`, `Patron Adapter y Simple Factory`, `Patron Composite` | Un patrón por vista |
 | `Recorrido principal` | Las clases que intervienen en el recorrido de la sección 11 |

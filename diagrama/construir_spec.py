@@ -917,10 +917,11 @@ diagramas = [
     {"nombre": "Capa Presentacion", "paquetes": [P],
      "clases": [f"I{n}Service" for n in SERVICIOS] + ["IServicioIdentidad"]},
     {"nombre": "Patron State - Publicacion",
-     "clases": ["Publicacion", "EstadoPublicacion", *ESTADOS_PUB, "CambioEstado"]},
+     "clases": ["Publicacion", "EstadoPublicacion", "EstadoPublicacionBase", *ESTADOS_PUB,
+                "EstadoPublicacionFactory", "CambioEstado"]},
     {"nombre": "Patron State - Contratacion",
-     "clases": ["Contratacion", "EstadoContratacion", *ESTADOS_CON, "CambioEstado",
-                "PropuestaReprogramacion"]},
+     "clases": ["Contratacion", "EstadoContratacion", "EstadoContratacionBase", *ESTADOS_CON,
+                "EstadoContratacionFactory", "CambioEstado", "PropuestaReprogramacion"]},
     {"nombre": "Patron Strategy",
      "clases": ["RecomendacionService", "IRecomendacionService", "IEstrategiaRecomendacion",
                 "AfinidadPorHabilidades", "PopularidadReciente", "IContratacionRepository",
@@ -949,20 +950,7 @@ diagramas = [
                 "Billetera", "EstadoContratacion", "EventoContratacion", "Calificacion"]},
 ]
 
-# Main resumido: dominio + servicios y patrones principales. Quedan fuera (siguen en el modelo y en
-# sus vistas por capa/patron): enums, Base y Factory de los State, repositorios, DTOs, adaptadores, UI.
-_fuera = {"EstadoPublicacionBase", "EstadoPublicacionFactory", "EstadoContratacionBase",
-          "EstadoContratacionFactory", "ReglaNegocioException"}
-_enums = {"TipoPerfil", "TipoPublicacion", "Modalidad", "CanalNotificacion", "TipoMovimiento",
-          "TipoEvento"}
-principal = [c["nombre"] for c in clases
-             if (c.get("paquete") == D and c["nombre"] not in _fuera | _enums)] + [
-    "IPerfilService", "IPublicacionService", "IBusquedaService", "IContratacionService",
-    "ICalificacionService", "INotificacionService", "IBilleteraService",
-    "IEventoObserver", "IPublicadorEventos", "ICanalNotificacion", "IServicioIdentidad",
-    "IEstrategiaRecomendacion"]
-
-spec = {"proyecto": "SkillSwap", "diagrama": "Main", "clases": clases, "principal": principal,
+spec = {"proyecto": "SkillSwap", "diagrama": "Main", "clases": clases,
         "relaciones": relaciones, "diagramas": diagramas}
 
 if __name__ == "__main__":
