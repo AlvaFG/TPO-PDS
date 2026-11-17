@@ -16,4 +16,7 @@ public interface IPerfilService {
     PerfilPublicoDto verPerfilDeUsuario(String userId);
 
     void darDeBaja(String userId);
+
+    /* Cambia solo nombre visible y biografia; conserva zona horaria, habilidades, disponibilidad y canales. */
+    void actualizarBasico(String userId, String nombreVisible, String biografia);
 }

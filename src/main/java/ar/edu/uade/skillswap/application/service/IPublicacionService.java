@@ -1,6 +1,9 @@
 package ar.edu.uade.skillswap.application.service;
 
 import ar.edu.uade.skillswap.application.dto.CambiarEstadoCommand;
+import ar.edu.uade.skillswap.application.dto.FranjaDto;
+import ar.edu.uade.skillswap.application.dto.PoliticaDto;
+import ar.edu.uade.skillswap.application.dto.PromocionCommand;
 import ar.edu.uade.skillswap.application.dto.PublicacionCommand;
 import ar.edu.uade.skillswap.application.dto.PublicacionDto;
 
@@ -18,4 +21,12 @@ public interface IPublicacionService {
 
     /* Todas las publicaciones del usuario, en cualquier estado. */
     List<PublicacionDto> listarPropias(String userId);
+
+    /* Franjas todavia libres de una publicacion, para elegir una al solicitar. */
+    List<FranjaDto> listarFranjasLibres(Long publicacionId);
+
+    List<PoliticaDto> listarPoliticas();
+
+    /* Solo el autor. La promocion vale desde hoy durante diasVigencia dias. */
+    void agregarPromocion(String userId, PromocionCommand cmd);
 }

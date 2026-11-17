@@ -73,7 +73,7 @@ public final class MockSkillSwapControllers implements UiControllers,
     @Override public List<String> categorias() { return List.of("Todas", "Tecnología", "Diseño", "Creatividad", "Negocios", "Productividad"); }
     @Override public List<Publicacion> listarPropias(String userId) { return publicaciones.stream().filter(p -> p.proveedor().equals("Mateo Silva")).toList(); }
 
-    @Override public Publicacion crearBorrador(String userId, String titulo, String descripcion, String categoria, Modalidad modalidad, int duracion, int precio) {
+    @Override public Publicacion crearBorrador(String userId, String titulo, String descripcion, String categoria, Modalidad modalidad, int duracion, int precio, String politicaId) {
         Publicacion p = new Publicacion(UUID.randomUUID().toString(), titulo, descripcion, categoria, modalidad, duracion, precio, 0, "Mateo Silva", List.of(categoria), EstadoPublicacion.BORRADOR, false);
         publicaciones.add(p); return p;
     }
@@ -86,7 +86,7 @@ public final class MockSkillSwapControllers implements UiControllers,
     }
 
     @Override public List<Contratacion> listarContrataciones(String userId) { return List.copyOf(contrataciones); }
-    @Override public Contratacion solicitar(String userId, String publicacionId, String objetivo) {
+    @Override public Contratacion solicitar(String userId, String publicacionId, String objetivo, String franjaId) {
         Publicacion p=publicaciones.stream().filter(x->x.id().equals(publicacionId)).findFirst().orElseThrow();
         Contratacion c=new Contratacion(UUID.randomUUID().toString(),p.titulo(),p.proveedor(),LocalDateTime.now().plusDays(4),p.precio(),EstadoContratacion.PENDIENTE); contrataciones.add(0,c);
         notificaciones.add(0,new Notificacion(UUID.randomUUID().toString(),"Solicitud enviada", "Tu solicitud para “"+p.titulo()+"” fue enviada.",LocalDateTime.now(),false,"RESERVA")); return c;
@@ -94,6 +94,26 @@ public final class MockSkillSwapControllers implements UiControllers,
 
     @Override public Contratacion avanzar(String userId, String id) { return updateContract(id, false); }
     @Override public Contratacion cancelar(String userId, String id) { return updateContract(id, true); }
+    @Override public void calificar(String userId, String id, int puntaje, String comentario) { }
+    @Override public Publicacion editar(String userId, String id, String titulo, String descripcion, int precio) {
+        for (int i=0;i<publicaciones.size();i++) if (publicaciones.get(i).id().equals(id)) {
+            Publicacion p=publicaciones.get(i); Publicacion n=new Publicacion(p.id(),titulo,descripcion,p.categoria(),p.modalidad(),p.duracionMinutos(),precio,p.reputacion(),p.proveedor(),p.etiquetas(),p.estado(),p.destacada()); publicaciones.set(i,n); return n;
+        }
+        throw new IllegalArgumentException("Publicación inexistente");
+    }
+    @Override public void agregarPromocion(String userId, String id, String tipo, int valor, int diasVigencia) { }
+    @Override public List<Politica> listarPoliticas() { return List.of(new Politica("1","Flexible"), new Politica("2","Estricta")); }
+    @Override public List<Franja> franjasDePublicacion(String publicacionId) { return List.of(new Franja("f1",LocalDateTime.now().plusDays(7)), new Franja("f2",LocalDateTime.now().plusDays(8))); }
+    @Override public Contratacion rechazar(String userId, String id, String motivo) { return cambiar(id, EstadoContratacion.RECHAZADA); }
+    @Override public List<Franja> franjasParaReprogramar(String userId, String id) { return franjasDePublicacion(null); }
+    @Override public Contratacion proponerReprogramacion(String userId, String id, String franjaId) { return contrataciones.stream().filter(c->c.id().equals(id)).findFirst().orElseThrow(); }
+    @Override public Contratacion aceptarReprogramacion(String userId, String id) { return proponerReprogramacion(userId, id, null); }
+    @Override public String comprobante(String userId, String id) { return "Precio acordado (demo sin promociones)"; }
+    private Contratacion cambiar(String id, EstadoContratacion estado) {
+        for(int i=0;i<contrataciones.size();i++) if(contrataciones.get(i).id().equals(id)) {
+            Contratacion c=contrataciones.get(i); Contratacion n=new Contratacion(c.id(),c.titulo(),c.contraparte(),c.fecha(),c.precio(),estado); contrataciones.set(i,n); return n;
+        } throw new IllegalArgumentException("Contratación inexistente");
+    }
     private Contratacion updateContract(String id, boolean cancel) {
         for(int i=0;i<contrataciones.size();i++) if(contrataciones.get(i).id().equals(id)) {
             Contratacion c=contrataciones.get(i); EstadoContratacion next=cancel?EstadoContratacion.CANCELADA:switch(c.estado()) {case PENDIENTE->EstadoContratacion.ACEPTADA; case ACEPTADA->EstadoContratacion.CONFIRMADA; case CONFIRMADA->EstadoContratacion.EN_CURSO; case EN_CURSO->EstadoContratacion.COMPLETADA; default->c.estado();};
@@ -107,5 +127,8 @@ public final class MockSkillSwapControllers implements UiControllers,
     @Override public List<Notificacion> listarNotificaciones(String userId) { return List.copyOf(notificaciones); }
     @Override public void marcarLeida(String userId, String id) { for(int i=0;i<notificaciones.size();i++){Notificacion n=notificaciones.get(i);if(n.id().equals(id))notificaciones.set(i,new Notificacion(n.id(),n.titulo(),n.detalle(),n.fecha(),true,n.tipo()));} }
     @Override public void marcarTodasLeidas(String userId) { for(Notificacion n:List.copyOf(notificaciones)) marcarLeida(userId,n.id()); }
-    @Override public Perfil verPerfil(String userId) { return new Perfil(userId,"Mateo Silva","Software Engineer & Mentor","Construyo productos digitales y acompaño a personas que quieren crecer en tecnología.",List.of("Java","Clean Architecture","Mentoría","SQL","Diseño OO"),4.9,37,52); }
+    private String perfilNombre="Mateo Silva", perfilBio="Construyo productos digitales y acompaño a personas que quieren crecer en tecnología.";
+    @Override public Perfil verPerfilDe(String perfilId) { return verPerfil(perfilId); }
+    @Override public Perfil actualizar(String userId, String nombre, String biografia) { perfilNombre=nombre; perfilBio=biografia; return verPerfil(userId); }
+    @Override public Perfil verPerfil(String userId) { return new Perfil(userId,perfilNombre,"Software Engineer & Mentor",perfilBio,List.of("Java","Clean Architecture","Mentoría","SQL","Diseño OO"),4.9,37,52); }
 }

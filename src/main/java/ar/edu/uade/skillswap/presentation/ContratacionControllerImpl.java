@@ -1,11 +1,15 @@
 package ar.edu.uade.skillswap.presentation;
 
+import ar.edu.uade.skillswap.application.dto.CalificarCommand;
 import ar.edu.uade.skillswap.application.dto.ContratacionDto;
 import ar.edu.uade.skillswap.application.dto.SolicitarCommand;
+import ar.edu.uade.skillswap.application.service.ICalificacionService;
 import ar.edu.uade.skillswap.application.service.IContratacionService;
+import ar.edu.uade.skillswap.application.service.IPublicacionService;
 import ar.edu.uade.skillswap.controllers.UiControllers.ContratacionController;
 import ar.edu.uade.skillswap.domain.exception.ReglaNegocioException;
 import ar.edu.uade.skillswap.model.Models.Contratacion;
+import ar.edu.uade.skillswap.model.Models.Franja;
 
 import java.util.List;
 
@@ -15,10 +19,15 @@ public class ContratacionControllerImpl implements ContratacionController {
     private static final int TAMANIO_PAGINA = 1000;
 
     private final IContratacionService contrataciones;
+    private final ICalificacionService calificaciones;
+    private final IPublicacionService publicaciones;
     private final EjecutorDeAcciones ejecutor;
 
-    public ContratacionControllerImpl(IContratacionService contrataciones, EjecutorDeAcciones ejecutor) {
+    public ContratacionControllerImpl(IContratacionService contrataciones, ICalificacionService calificaciones,
+                                      IPublicacionService publicaciones, EjecutorDeAcciones ejecutor) {
         this.contrataciones = contrataciones;
+        this.calificaciones = calificaciones;
+        this.publicaciones = publicaciones;
         this.ejecutor = ejecutor;
     }
 
@@ -28,12 +37,12 @@ public class ContratacionControllerImpl implements ContratacionController {
                 .contenido().stream().map(Conversor::contratacion).toList());
     }
 
-    /* La UI no elige franja: se toma la primera libre de la publicacion (franjaId null). */
+    /* Sin franja elegida (franjaId null) se toma la primera libre de la publicacion. */
     @Override
-    public Contratacion solicitar(String userId, String publicacionId, String objetivo) {
+    public Contratacion solicitar(String userId, String publicacionId, String objetivo, String franjaId) {
         return ejecutor.ejecutar(userId, () -> {
-            Long id = contrataciones.solicitar(userId,
-                    new SolicitarCommand(Conversor.id(publicacionId), null, null, objetivo));
+            Long id = contrataciones.solicitar(userId, new SolicitarCommand(Conversor.id(publicacionId),
+                    franjaId == null ? null : Conversor.id(franjaId), null, objetivo));
             return ver(userId, id);
         });
     }
@@ -66,12 +75,62 @@ public class ContratacionControllerImpl implements ContratacionController {
     }
 
     @Override
+    public List<Franja> franjasDePublicacion(String publicacionId) {
+        return publicaciones.listarFranjasLibres(Conversor.id(publicacionId)).stream().map(Conversor::franja).toList();
+    }
+
+    @Override
+    public Contratacion rechazar(String userId, String contratacionId, String motivo) {
+        return ejecutor.ejecutar(userId, () -> {
+            Long id = Conversor.id(contratacionId);
+            contrataciones.rechazar(userId, id, motivo);
+            return ver(userId, id);
+        });
+    }
+
+    @Override
+    public List<Franja> franjasParaReprogramar(String userId, String contratacionId) {
+        return ejecutor.ejecutar(userId, () -> contrataciones.franjasLibres(userId, Conversor.id(contratacionId))
+                .stream().map(Conversor::franja).toList());
+    }
+
+    @Override
+    public Contratacion proponerReprogramacion(String userId, String contratacionId, String franjaId) {
+        return ejecutor.ejecutar(userId, () -> {
+            Long id = Conversor.id(contratacionId);
+            contrataciones.proponerReprogramacion(userId, id, Conversor.id(franjaId));
+            return ver(userId, id);
+        });
+    }
+
+    @Override
+    public Contratacion aceptarReprogramacion(String userId, String contratacionId) {
+        return ejecutor.ejecutar(userId, () -> {
+            Long id = Conversor.id(contratacionId);
+            contrataciones.aceptarReprogramacion(userId, id);
+            return ver(userId, id);
+        });
+    }
+
+    @Override
+    public String comprobante(String userId, String contratacionId) {
+        return ejecutor.ejecutar(userId,
+                () -> contrataciones.verComprobante(userId, Conversor.id(contratacionId)).detallePrecio());
+    }
+
+    @Override
     public Contratacion cancelar(String userId, String contratacionId) {
         return ejecutor.ejecutar(userId, () -> {
             Long id = Conversor.id(contratacionId);
             contrataciones.cancelar(userId, id, "Cancelada desde la aplicacion");
             return ver(userId, id);
         });
+    }
+
+    @Override
+    public void calificar(String userId, String contratacionId, int puntaje, String comentario) {
+        ejecutor.ejecutar(userId, () ->
+                calificaciones.calificar(userId, new CalificarCommand(Conversor.id(contratacionId), puntaje, comentario)));
     }
 
     private Contratacion ver(String userId, Long id) {

@@ -122,7 +122,7 @@ Cada una es un `avanzar` más. `completar` publica `SESION_COMPLETADA`. En COMPL
 
 ## Paso 7 — Calificar y recalcular la reputación
 
-La ventana del kit **no tiene botón de calificar**, así que este paso se ejecuta desde las pruebas (`RecorridoPrincipalTest`, `CalificacionServiceTest`).
+En la ventana, una contratación COMPLETADA muestra el botón **Calificar** (puntaje de 1 a 5 y comentario). También lo cubren las pruebas (`RecorridoPrincipalTest`, `CalificacionServiceTest`, `SkillSwapControllersTest`).
 
 | Qué pasa | Clase |
 |---|---|

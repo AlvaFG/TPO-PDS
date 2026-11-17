@@ -1,6 +1,9 @@
 package ar.edu.uade.skillswap.application.service;
 
 import ar.edu.uade.skillswap.application.dto.CambiarEstadoCommand;
+import ar.edu.uade.skillswap.application.dto.FranjaDto;
+import ar.edu.uade.skillswap.application.dto.PoliticaDto;
+import ar.edu.uade.skillswap.application.dto.PromocionCommand;
 import ar.edu.uade.skillswap.application.dto.PublicacionCommand;
 import ar.edu.uade.skillswap.application.dto.PublicacionDto;
 import ar.edu.uade.skillswap.application.exception.AccesoDenegadoException;
@@ -12,13 +15,18 @@ import ar.edu.uade.skillswap.application.port.IPoliticaCancelacionRepository;
 import ar.edu.uade.skillswap.application.port.IPublicacionRepository;
 import ar.edu.uade.skillswap.domain.catalogo.Categoria;
 import ar.edu.uade.skillswap.domain.catalogo.Habilidad;
+import ar.edu.uade.skillswap.domain.exception.ReglaNegocioException;
 import ar.edu.uade.skillswap.domain.model.FranjaHoraria;
+import ar.edu.uade.skillswap.domain.precio.Promocion;
+import ar.edu.uade.skillswap.domain.precio.PromocionMontoFijo;
+import ar.edu.uade.skillswap.domain.precio.PromocionPorcentual;
 import ar.edu.uade.skillswap.domain.model.Perfil;
 import ar.edu.uade.skillswap.domain.model.Publicacion;
 import ar.edu.uade.skillswap.domain.model.SkillCoins;
 import ar.edu.uade.skillswap.domain.politica.PoliticaCancelacion;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -82,6 +90,41 @@ public class PublicacionService implements IPublicacionService {
     public List<PublicacionDto> listarPropias(String userId) {
         Perfil autor = perfilActivo(userId);
         return publicacionRepository.listarDeAutor(autor.getId()).stream().map(PublicacionDto::desde).toList();
+    }
+
+    @Override
+    public List<FranjaDto> listarFranjasLibres(Long publicacionId) {
+        return transacciones.ejecutar(() -> publicacionRepository.buscarPorId(publicacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe la publicacion " + publicacionId))
+                .getFranjas().stream().filter(FranjaHoraria::estaLibre)
+                .map(f -> new FranjaDto(f.getId(), f.getInicio())).toList());
+    }
+
+    @Override
+    public List<PoliticaDto> listarPoliticas() {
+        return politicaRepository.listar().stream().map(p -> new PoliticaDto(p.getId(), p.getNombre())).toList();
+    }
+
+    @Override
+    public void agregarPromocion(String userId, PromocionCommand cmd) {
+        transacciones.ejecutar(() -> {
+            Publicacion publicacion = publicacionDelAutor(userId, cmd.publicacionId());
+            publicacion.agregarPromocion(promocion(cmd));
+            return publicacionRepository.guardar(publicacion);
+        });
+    }
+
+    private Promocion promocion(PromocionCommand cmd) {
+        LocalDate desde = LocalDate.now(reloj);
+        LocalDate hasta = desde.plusDays(cmd.diasVigencia());
+        try {
+            return switch (cmd.tipo()) {
+                case PORCENTUAL -> new PromocionPorcentual(cmd.codigo(), desde, hasta, cmd.valor());
+                case MONTO_FIJO -> new PromocionMontoFijo(cmd.codigo(), desde, hasta, new SkillCoins(cmd.valor()));
+            };
+        } catch (IllegalArgumentException e) {
+            throw new ReglaNegocioException(e.getMessage());
+        }
     }
 
     private Publicacion publicacionDelAutor(String userId, Long publicacionId) {

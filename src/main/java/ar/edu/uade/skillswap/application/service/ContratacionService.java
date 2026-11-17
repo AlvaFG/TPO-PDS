@@ -1,6 +1,7 @@
 package ar.edu.uade.skillswap.application.service;
 
 import ar.edu.uade.skillswap.application.dto.ContratacionDto;
+import ar.edu.uade.skillswap.application.dto.FranjaDto;
 import ar.edu.uade.skillswap.application.dto.Pagina;
 import ar.edu.uade.skillswap.application.dto.SolicitarCommand;
 import ar.edu.uade.skillswap.application.evento.IPublicadorEventos;
@@ -24,6 +25,7 @@ import ar.edu.uade.skillswap.domain.exception.ReglaNegocioException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /*
  * Casos de uso de la contratacion. Cada comando corre dentro de IGestorTransacciones
@@ -175,6 +177,13 @@ public class ContratacionService implements IContratacionService {
     @Override
     public ContratacionDto verComprobante(String userId, Long contratacionId) {
         return ContratacionDto.desde(deParticipante(userId, contratacionId), userId);
+    }
+
+    @Override
+    public List<FranjaDto> franjasLibres(String userId, Long contratacionId) {
+        return transacciones.ejecutar(() -> deParticipante(userId, contratacionId).getPublicacion().getFranjas()
+                .stream().filter(FranjaHoraria::estaLibre)
+                .map(f -> new FranjaDto(f.getId(), f.getInicio())).toList());
     }
 
     private Contratacion buscar(Long contratacionId) {

@@ -189,13 +189,13 @@ El recorrido de la sección 13 (publicar, solicitar, aceptar, pagar, completar, 
 
 ## Decisiones, supuestos y límites conocidos
 
-- **UI del kit.** No expone crear perfil ni calificar: esas operaciones existen en los servicios (`PerfilService.crearPerfil`, `CalificacionService.calificar`) y se prueban sin la UI. El botón "avanzar" de la UI elige el caso de uso según el estado y el rol (aceptar, pagar, iniciar, completar).
+- **UI del kit.** Se amplió el kit (`UiControllers`, `Models`, `SkillSwapView`) para exponer: rechazar, reprogramar (proponer y aceptar), calificar, elegir horario al solicitar, ver el comprobante con el detalle del precio, ver el perfil del proveedor, editar el perfil (nombre y biografía), editar un borrador, agregar promociones y elegir la política de cancelación. Sigue sin exponer crear perfil ni darse de baja (`PerfilService.crearPerfil`, `darDeBaja`): la ventana trabaja con un usuario fijo que ya existe. El botón principal de cada contratación se llama según el estado y el rol (Aceptar, Pagar, Iniciar, Completar) y muestra "Esperando a la contraparte" cuando no le toca actuar.
 - **Modalidad HIBRIDA.** La UI la ofrece pero el dominio solo tiene remota y presencial (consigna 4.2); se rechaza con un error legible.
-- **Franjas.** La UI no carga horarios: el borrador nace con tres franjas diarias desde la semana siguiente, y al solicitar se toma la primera libre.
+- **Franjas.** La UI no carga horarios: el borrador nace con tres franjas diarias desde la semana siguiente. Al solicitar se puede elegir una franja libre (por defecto, la primera).
 - **Controllers.** Son los del kit, que devuelven valores y lanzan `ErrorDeAplicacion`; no hay un tipo `Resultado<T>`. Los comandos y DTO son `record`.
 - **Mapeo JPA en el dominio.** Las entidades de dominio llevan anotaciones de `jakarta.persistence` (como en el material de la cátedra); no hay otro código de infraestructura en el dominio.
 - **Reputación.** Se recalcula por evento (`ReputacionObserver`) fuera de la transacción de calificar, y no puede editarse manualmente.
-- **Promociones.** El dominio y el cálculo de precio están probados (`PromocionDecoratorTest`), pero ningún controller crea promociones: no hay pantalla ni caso de uso que las cargue.
+- **Promociones.** El autor las agrega desde "Mis publicaciones" (`PublicacionService.agregarPromocion`: porcentual o monto fijo, vigente desde hoy durante N días) y se aplican al precio de las nuevas solicitudes; el comprobante muestra el detalle.
 - **Notificaciones.** Los proveedores de email y push son mocks que escriben en consola; la bandeja interna sí se persiste.
 - **HTML sin escapar en la vista del kit.** `ui/SkillSwapView.java` (código de la cátedra, sin modificar) arma etiquetas `<html>…` concatenando `titulo`, `descripcion` y `bio` sin escapar. Un texto con HTML se interpreta en el `JLabel` (por ejemplo, un `<img src="http://…">` haría un pedido de red al mostrarse) o rompe el formato de la pantalla. Swing no ejecuta scripts. No se corrigió para mantener el kit tal cual vino; la corrección sería escapar `& < >` en `Conversor` o en la vista.
 - **Identidad.** `IdentityClientMock` conoce solo a los usuarios de la demostración; no hay login real (fuera de alcance).

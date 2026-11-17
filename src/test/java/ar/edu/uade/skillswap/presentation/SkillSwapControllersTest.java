@@ -6,6 +6,10 @@ import ar.edu.uade.skillswap.controllers.UiControllers;
 import ar.edu.uade.skillswap.domain.catalogo.Categoria;
 import ar.edu.uade.skillswap.domain.model.Billetera;
 import ar.edu.uade.skillswap.domain.model.SkillCoins;
+import ar.edu.uade.skillswap.domain.politica.PoliticaEstricta;
+import ar.edu.uade.skillswap.domain.politica.PoliticaFlexible;
+import ar.edu.uade.skillswap.model.Models.Franja;
+import ar.edu.uade.skillswap.model.Models.Politica;
 import ar.edu.uade.skillswap.model.Models.Contratacion;
 import ar.edu.uade.skillswap.model.Models.EstadoContratacion;
 import ar.edu.uade.skillswap.model.Models.EstadoPublicacion;
@@ -36,6 +40,7 @@ class SkillSwapControllersTest {
     private final Repositorios.Billeteras billeteras = new Repositorios.Billeteras();
     private final Repositorios.Catalogo catalogo = new Repositorios.Catalogo();
     private final Repositorios.Notificaciones notificaciones = new Repositorios.Notificaciones();
+    private final Repositorios.Politicas politicas = new Repositorios.Politicas();
     private UiControllers ui;
 
     @BeforeEach
@@ -52,7 +57,7 @@ class SkillSwapControllersTest {
         Set<String> usuarios = Set.of(PROV, CLI, "cli2");
         ui = ConfiguracionApp.crear(new Puertos(perfiles, new Repositorios.Publicaciones(),
                 new Repositorios.Contrataciones(), billeteras, notificaciones, new Repositorios.Calificaciones(),
-                catalogo, new Repositorios.Politicas(), new Repositorios.GestorTransacciones(),
+                catalogo, politicas, new Repositorios.GestorTransacciones(),
                 new IdentidadFija(usuarios), canal -> notificaciones::guardar, reloj));
     }
 
@@ -83,6 +88,24 @@ class SkillSwapControllersTest {
         assertEquals(500, ui.wallet().consultarSaldo(CLI));
         assertEquals(1000, ui.wallet().consultarSaldo(PROV));
         assertEquals(List.of(completada), ui.contrataciones().listarContrataciones(PROV));
+    }
+
+    @Test
+    void calificarSoloEnCompletadaYUnaSolaVezPorParticipante() {
+        Publicacion p = publicar("Mentoria Java", "Tecnologia", Modalidad.REMOTA, 1000);
+        Contratacion c = ui.contrataciones().solicitar(CLI, p.id(), "Practicar");
+        assertTrue(error(() -> ui.contrataciones().calificar(CLI, c.id(), 5, "Muy buena")).getMessage().contains("COMPLETADA"));
+        ui.contrataciones().avanzar(PROV, c.id());
+        ui.contrataciones().avanzar(CLI, c.id());
+        ui.contrataciones().avanzar(PROV, c.id());
+        ui.contrataciones().avanzar(PROV, c.id());
+
+        ui.contrataciones().calificar(CLI, c.id(), 4, "Muy buena");
+
+        assertEquals(1, ui.perfiles().verPerfil(PROV).resenas());
+        assertEquals(4.0, ui.perfiles().verPerfil(PROV).reputacion());
+        assertTrue(error(() -> ui.contrataciones().calificar(CLI, c.id(), 5, "Otra vez")).getMessage().contains("ya califico"));
+        ui.contrataciones().calificar(PROV, c.id(), 5, "Buen alumno");
     }
 
     @Test
@@ -252,6 +275,100 @@ class SkillSwapControllersTest {
         assertEquals("Perfil prov", perfil.nombre());
         assertEquals("Profesional", perfil.rol());
         assertEquals(0, perfil.proyectosCompletados());
+    }
+
+    @Test
+    void rechazarDejaLaContratacionRechazadaYCadaUnoVeSuRol() {
+        Publicacion p = publicar("Mentoria Java", "Tecnologia", Modalidad.REMOTA, 1000);
+        Contratacion c = ui.contrataciones().solicitar(CLI, p.id(), "Practicar");
+        assertEquals("CLIENTE", ui.contrataciones().listarContrataciones(CLI).get(0).rol());
+        assertEquals("PROVEEDOR", ui.contrataciones().listarContrataciones(PROV).get(0).rol());
+
+        Contratacion rechazada = ui.contrataciones().rechazar(PROV, c.id(), "No tengo horario");
+
+        assertEquals(EstadoContratacion.RECHAZADA, rechazada.estado());
+        assertTrue(error(() -> ui.contrataciones().avanzar(PROV, c.id())).getMessage().contains("RECHAZADA"));
+    }
+
+    @Test
+    void solicitarPermiteElegirLaFranja() {
+        Publicacion p = publicar("Mentoria Java", "Tecnologia", Modalidad.REMOTA, 1000);
+        List<Franja> libres = ui.contrataciones().franjasDePublicacion(p.id());
+        assertEquals(3, libres.size());
+
+        Contratacion c = ui.contrataciones().solicitar(CLI, p.id(), "Practicar", libres.get(2).id());
+
+        assertEquals(libres.get(2).inicio(), c.fecha());
+    }
+
+    @Test
+    void reprogramarLaProponeUnoYLaAceptaLaContraparte() {
+        Publicacion p = publicar("Mentoria Java", "Tecnologia", Modalidad.REMOTA, 1000);
+        Contratacion c = ui.contrataciones().solicitar(CLI, p.id(), "Practicar");
+        ui.contrataciones().avanzar(PROV, c.id());
+        List<Franja> libres = ui.contrataciones().franjasParaReprogramar(CLI, c.id());
+        assertEquals(2, libres.size());
+
+        Contratacion propuesta = ui.contrataciones().proponerReprogramacion(CLI, c.id(), libres.get(0).id());
+
+        assertEquals(libres.get(0).inicio(), propuesta.propuesta().nuevaFecha());
+        assertFalse(propuesta.propuesta().puedoAceptar());
+        assertTrue(ui.contrataciones().listarContrataciones(PROV).get(0).propuesta().puedoAceptar());
+        error(() -> ui.contrataciones().aceptarReprogramacion(CLI, c.id()));
+        Contratacion aceptada = ui.contrataciones().aceptarReprogramacion(PROV, c.id());
+        assertNull(aceptada.propuesta());
+        assertEquals(libres.get(0).inicio(), aceptada.fecha());
+    }
+
+    @Test
+    void editarSoloEnBorrador() {
+        Publicacion borrador = ui.publicaciones().crearBorrador(PROV, "Viejo", "D", "Tecnologia", Modalidad.REMOTA, 60, 500);
+
+        Publicacion editada = ui.publicaciones().editar(PROV, borrador.id(), "Nuevo", "Otra descripcion", 700);
+
+        assertEquals("Nuevo", editada.titulo());
+        assertEquals(700, editada.precio());
+        ui.publicaciones().cambiarEstado(PROV, borrador.id(), EstadoPublicacion.PUBLICADA);
+        error(() -> ui.publicaciones().editar(PROV, borrador.id(), "Tarde", "D", 800));
+    }
+
+    @Test
+    void laPromocionBajaElPrecioYElComprobanteLoDetalla() {
+        Publicacion p = publicar("Mentoria Java", "Tecnologia", Modalidad.REMOTA, 1000);
+        error(() -> ui.publicaciones().agregarPromocion(CLI, p.id(), "PORCENTUAL", 10, 30));
+
+        ui.publicaciones().agregarPromocion(PROV, p.id(), "PORCENTUAL", 10, 30);
+        Contratacion c = ui.contrataciones().solicitar(CLI, p.id(), "Practicar");
+
+        assertEquals(900, c.precio());
+        assertFalse(ui.contrataciones().comprobante(CLI, c.id()).isBlank());
+    }
+
+    @Test
+    void laPoliticaDeCancelacionSeEligeAlCrearElBorrador() {
+        politicas.guardar(new PoliticaFlexible());
+        politicas.guardar(new PoliticaEstricta());
+        List<Politica> disponibles = ui.publicaciones().listarPoliticas();
+        assertEquals(2, disponibles.size());
+
+        Publicacion borrador = ui.publicaciones().crearBorrador(PROV, "T", "D", "Tecnologia", Modalidad.REMOTA, 60, 500,
+                disponibles.get(1).id());
+
+        assertNotNull(borrador.id());
+        error(() -> ui.publicaciones().crearBorrador(PROV, "T", "D", "Tecnologia", Modalidad.REMOTA, 60, 500, "999"));
+    }
+
+    @Test
+    void sePuedeVerElPerfilDelProveedorYEditarElPropio() {
+        Publicacion p = publicar("Mentoria Java", "Tecnologia", Modalidad.REMOTA, 1000);
+        assertNotNull(p.autorId());
+        assertEquals("Perfil prov", ui.perfiles().verPerfilDe(p.autorId()).nombre());
+
+        var actualizado = ui.perfiles().actualizar(PROV, "Nombre nuevo", "Bio nueva");
+
+        assertEquals("Nombre nuevo", actualizado.nombre());
+        assertEquals("Bio nueva", ui.perfiles().verPerfil(PROV).bio());
+        error(() -> ui.perfiles().actualizar(PROV, " ", "x"));
     }
 
     /* Identidad simulada: acepta una lista fija de usuarios. */

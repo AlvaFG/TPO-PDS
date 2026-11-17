@@ -18,6 +18,7 @@ import ar.edu.uade.skillswap.application.recomendacion.IEstrategiaRecomendacion;
 import ar.edu.uade.skillswap.application.recomendacion.PopularidadReciente;
 import ar.edu.uade.skillswap.application.service.BilleteraService;
 import ar.edu.uade.skillswap.application.service.BusquedaService;
+import ar.edu.uade.skillswap.application.service.CalificacionService;
 import ar.edu.uade.skillswap.application.service.ContratacionService;
 import ar.edu.uade.skillswap.application.service.NotificacionService;
 import ar.edu.uade.skillswap.application.service.PerfilService;
@@ -78,7 +79,9 @@ public final class ConfiguracionApp {
         return new SkillSwapControllers(
                 new BusquedaControllerImpl(busqueda, recomendacion, ejecutor),
                 new PublicacionControllerImpl(publicacion, busqueda, ejecutor, p.reloj()),
-                new ContratacionControllerImpl(contratacion, ejecutor),
+                new ContratacionControllerImpl(contratacion,
+                        new CalificacionService(p.contrataciones(), p.calificaciones(), p.transacciones(), eventos),
+                        publicacion, ejecutor),
                 new WalletControllerImpl(billetera, ejecutor),
                 new NotificacionControllerImpl(notificacion, ejecutor),
                 new PerfilControllerImpl(perfil, ejecutor));

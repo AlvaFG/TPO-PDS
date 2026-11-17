@@ -143,7 +143,7 @@ Los casos de uso se prueban con repositorios en memoria y Mockito, porque depend
 ## Sobre lo que falta o puede mejorarse (preguntas incómodas)
 
 **¿Qué no cumple la consigna?**
-Dos cosas conocidas: las entidades del dominio llevan anotaciones JPA, y la ventana del kit no expone calificar, crear perfil, reprogramar ni promociones (esas operaciones están implementadas y probadas en los servicios). → [10](10-consigna-vs-implementacion.md)
+Dos cosas conocidas: las entidades del dominio llevan anotaciones JPA, y la ventana del kit no expone crear perfil ni darse de baja (están implementadas y probadas en los servicios). → [10](10-consigna-vs-implementacion.md)
 
 **¿Por qué hay código Python?**
 Son scripts de documentación que generan el diagrama de clases de StarUML y el PDF del informe. No son parte de la aplicación. → [09](09-codigo-python-y-diagramas.md)

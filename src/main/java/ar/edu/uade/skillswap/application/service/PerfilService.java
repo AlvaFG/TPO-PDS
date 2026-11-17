@@ -79,6 +79,15 @@ public class PerfilService implements IPerfilService {
         return armarDto(buscarPorUserId(userId));
     }
 
+    @Override
+    public void actualizarBasico(String userId, String nombreVisible, String biografia) {
+        transacciones.ejecutar(() -> {
+            Perfil perfil = buscarPorUserId(userId);
+            perfil.actualizarDatos(nombreVisible, biografia, perfil.getZonaHoraria());
+            return perfilRepository.guardar(perfil);
+        });
+    }
+
     /* Baja logica: las operaciones historicas se conservan. */
     @Override
     public void darDeBaja(String userId) {

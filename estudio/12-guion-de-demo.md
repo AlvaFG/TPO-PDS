@@ -9,7 +9,7 @@ La ventana del kit **solo actúa como `user-mateo`** (está fijo en el código).
 | Se puede mostrar en la ventana | Solo se puede mostrar con la prueba |
 |---|---|
 | Buscar, filtrar, ver detalle y solicitar | Aceptar y pagar **entre dos personas distintas** (hace falta cambiar de usuario) |
-| Aceptar una solicitud recibida (Mateo es proveedor de la #3) | Calificar (la ventana no tiene botón) |
+| Aceptar una solicitud recibida (Mateo es proveedor de la #3) | Dos políticas de cancelación con distinto reintegro |
 | Cancelar con reintegro, errores legibles, billetera, notificaciones | Dos políticas de cancelación, último cupo con dos hilos |
 | Crear un borrador y publicarlo | Oferta incompleta (la ventana siempre completa los datos) |
 

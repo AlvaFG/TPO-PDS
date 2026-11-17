@@ -245,5 +245,10 @@ public final class Repositorios {
         public Optional<PoliticaCancelacion> buscarPorId(Long id) {
             return datos.buscar(id);
         }
+
+        @Override
+        public List<PoliticaCancelacion> listar() {
+            return datos.todos();
+        }
     }
 }

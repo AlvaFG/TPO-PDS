@@ -18,4 +18,17 @@ public class PerfilControllerImpl implements PerfilController {
     public Perfil verPerfil(String userId) {
         return ejecutor.ejecutar(userId, () -> Conversor.perfil(userId, perfiles.verPerfilDeUsuario(userId)));
     }
+
+    @Override
+    public Perfil verPerfilDe(String perfilId) {
+        return Conversor.perfil(perfilId, perfiles.verPerfil(Conversor.id(perfilId)));
+    }
+
+    @Override
+    public Perfil actualizar(String userId, String nombre, String biografia) {
+        return ejecutor.ejecutar(userId, () -> {
+            perfiles.actualizarBasico(userId, nombre, biografia);
+            return Conversor.perfil(userId, perfiles.verPerfilDeUsuario(userId));
+        });
+    }
 }

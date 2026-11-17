@@ -61,6 +61,7 @@ public class ContratacionJpaRepository implements IContratacionRepository {
                     .setParameter("userId", userId)
                     .getSingleResult();
             List<Contratacion> contenido = em.createQuery(CON_PARTES
+                            + "left join fetch c.propuesta.nuevaFranja "
                             + "where cl.userId = :userId or pr.userId = :userId order by c.id desc", Contratacion.class)
                     .setParameter("userId", userId)
                     .setFirstResult(pagina * tamanio)

@@ -1,8 +1,11 @@
 package ar.edu.uade.skillswap.application.service;
 
 import ar.edu.uade.skillswap.application.dto.ContratacionDto;
+import ar.edu.uade.skillswap.application.dto.FranjaDto;
 import ar.edu.uade.skillswap.application.dto.Pagina;
 import ar.edu.uade.skillswap.application.dto.SolicitarCommand;
+
+import java.util.List;
 
 /* Puerto de entrada: casos de uso de Contratacion. */
 public interface IContratacionService {
@@ -30,4 +33,7 @@ public interface IContratacionService {
     Pagina<ContratacionDto> listar(String userId, int pagina, int tamanio);
 
     ContratacionDto verComprobante(String userId, Long contratacionId);
+
+    /* Franjas libres de la publicacion, para elegir una al proponer una reprogramacion. */
+    List<FranjaDto> franjasLibres(String userId, Long contratacionId);
 }

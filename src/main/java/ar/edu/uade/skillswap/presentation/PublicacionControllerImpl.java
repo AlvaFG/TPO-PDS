@@ -3,6 +3,7 @@ package ar.edu.uade.skillswap.presentation;
 import ar.edu.uade.skillswap.application.dto.AccionPublicacion;
 import ar.edu.uade.skillswap.application.dto.CambiarEstadoCommand;
 import ar.edu.uade.skillswap.application.dto.CategoriaDto;
+import ar.edu.uade.skillswap.application.dto.PromocionCommand;
 import ar.edu.uade.skillswap.application.dto.PublicacionCommand;
 import ar.edu.uade.skillswap.application.service.IBusquedaService;
 import ar.edu.uade.skillswap.application.service.IPublicacionService;
@@ -10,6 +11,7 @@ import ar.edu.uade.skillswap.controllers.UiControllers.PublicacionController;
 import ar.edu.uade.skillswap.domain.model.TipoPublicacion;
 import ar.edu.uade.skillswap.model.Models.EstadoPublicacion;
 import ar.edu.uade.skillswap.model.Models.Modalidad;
+import ar.edu.uade.skillswap.model.Models.Politica;
 import ar.edu.uade.skillswap.model.Models.Publicacion;
 
 import java.time.Clock;
@@ -46,14 +48,39 @@ public class PublicacionControllerImpl implements PublicacionController {
 
     @Override
     public Publicacion crearBorrador(String userId, String titulo, String descripcion, String categoria,
-                                     Modalidad modalidad, int duracion, int precio) {
+                                     Modalidad modalidad, int duracion, int precio, String politicaId) {
         return ejecutor.ejecutar(userId, () -> {
             PublicacionCommand cmd = new PublicacionCommand(TipoPublicacion.MENTORIA, titulo, descripcion,
                     categoriaId(categoria), List.of(), ModalidadUi.aDominio(modalidad), duracion,
-                    FRANJAS_POR_DEFECTO, precio, Set.of(categoria), franjas(), null);
+                    FRANJAS_POR_DEFECTO, precio, Set.of(categoria), franjas(),
+                    politicaId == null ? null : Conversor.id(politicaId));
             Long id = publicaciones.crearBorrador(userId, cmd);
             return propia(userId, id);
         });
+    }
+
+    /* El nucleo solo edita titulo, descripcion y precio base (y solo en BORRADOR). */
+    @Override
+    public Publicacion editar(String userId, String publicacionId, String titulo, String descripcion, int precio) {
+        return ejecutor.ejecutar(userId, () -> {
+            Long id = Conversor.id(publicacionId);
+            publicaciones.editar(userId, id, new PublicacionCommand(null, titulo, descripcion, null, null, null,
+                    0, 0, precio, null, null, null));
+            return propia(userId, id);
+        });
+    }
+
+    @Override
+    public void agregarPromocion(String userId, String publicacionId, String tipo, int valor, int diasVigencia) {
+        ejecutor.ejecutar(userId, () -> publicaciones.agregarPromocion(userId, new PromocionCommand(
+                Conversor.id(publicacionId), PromocionCommand.Tipo.valueOf(tipo), valor,
+                "PROMO-" + tipo + "-" + valor, diasVigencia)));
+    }
+
+    @Override
+    public List<Politica> listarPoliticas() {
+        return publicaciones.listarPoliticas().stream()
+                .map(p -> new Politica(String.valueOf(p.id()), p.nombre())).toList();
     }
 
     @Override

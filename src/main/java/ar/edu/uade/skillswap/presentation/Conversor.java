@@ -2,6 +2,7 @@ package ar.edu.uade.skillswap.presentation;
 
 import ar.edu.uade.skillswap.application.dto.BilleteraDto;
 import ar.edu.uade.skillswap.application.dto.ContratacionDto;
+import ar.edu.uade.skillswap.application.dto.FranjaDto;
 import ar.edu.uade.skillswap.application.dto.MovimientoDto;
 import ar.edu.uade.skillswap.application.dto.NotificacionDto;
 import ar.edu.uade.skillswap.application.dto.PerfilPublicoDto;
@@ -9,6 +10,8 @@ import ar.edu.uade.skillswap.application.dto.PublicacionDto;
 import ar.edu.uade.skillswap.domain.model.TipoMovimiento;
 import ar.edu.uade.skillswap.model.Models.Contratacion;
 import ar.edu.uade.skillswap.model.Models.EstadoContratacion;
+import ar.edu.uade.skillswap.model.Models.Franja;
+import ar.edu.uade.skillswap.model.Models.Propuesta;
 import ar.edu.uade.skillswap.model.Models.EstadoPublicacion;
 import ar.edu.uade.skillswap.model.Models.Modalidad;
 import ar.edu.uade.skillswap.model.Models.Movimiento;
@@ -41,12 +44,17 @@ final class Conversor {
         return new Publicacion(String.valueOf(d.id()), d.titulo(), d.descripcion(), d.categoria(),
                 d.modalidad() == null ? null : Modalidad.valueOf(d.modalidad()), d.duracionMinutos(),
                 entero(d.precio()), d.reputacionAutor(), d.autor(), d.etiquetas(),
-                EstadoPublicacion.valueOf(d.estado()), false);
+                EstadoPublicacion.valueOf(d.estado()), false, String.valueOf(d.autorId()));
     }
 
     static Contratacion contratacion(ContratacionDto d) {
         return new Contratacion(String.valueOf(d.id()), d.publicacion(), d.contraparte(), d.inicio(),
-                entero(d.precio()), EstadoContratacion.valueOf(d.estado()));
+                entero(d.precio()), EstadoContratacion.valueOf(d.estado()), d.rol(),
+                d.propuestaFecha() == null ? null : new Propuesta(d.propuestaFecha(), d.puedeAceptarPropuesta()));
+    }
+
+    static Franja franja(FranjaDto d) {
+        return new Franja(String.valueOf(d.id()), d.inicio());
     }
 
     static Notificacion notificacion(NotificacionDto d) {

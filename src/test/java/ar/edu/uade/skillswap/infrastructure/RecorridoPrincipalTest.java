@@ -29,6 +29,7 @@ import ar.edu.uade.skillswap.model.Models.Contratacion;
 import ar.edu.uade.skillswap.model.Models.EstadoContratacion;
 import ar.edu.uade.skillswap.model.Models.EstadoPublicacion;
 import ar.edu.uade.skillswap.model.Models.FiltrosBusqueda;
+import ar.edu.uade.skillswap.model.Models.Franja;
 import ar.edu.uade.skillswap.model.Models.Modalidad;
 import ar.edu.uade.skillswap.model.Models.Publicacion;
 import org.junit.jupiter.api.AfterAll;
@@ -47,12 +48,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * Recorrido principal de la consigna (seccion 13), de extremo a extremo y sobre JPA:
  * crear perfiles -> publicar -> buscar -> solicitar -> aceptar -> pagar -> iniciar -> completar -> calificar.
  * Se usan los controllers de la UI (controllers -> casos de uso -> repositorios JPA -> base con migraciones).
- * La UI del kit no expone crear perfil ni calificar: esos dos pasos llaman a los servicios de application.
+ * La UI del kit no expone crear perfil: ese paso llama al servicio de application (calificar tambien, aca, por simplicidad).
  */
 class RecorridoPrincipalTest {
 
     private static final String PROVEEDOR = "user-e2e-proveedor";
     private static final String CLIENTE = "user-e2e-cliente";
+    private static final String PROVEEDOR_2 = "user-e2e-proveedor-2";
+    private static final String CLIENTE_2 = "user-e2e-cliente-2";
 
     private static JpaGestorTransacciones gestor;
     private static UiControllers ui;
@@ -65,6 +68,8 @@ class RecorridoPrincipalTest {
         Map<String, String> usuarios = new HashMap<>(IdentityClientMock.USUARIOS_DEMO);
         usuarios.put(PROVEEDOR, "proveedor.e2e@skillswap.test");
         usuarios.put(CLIENTE, "cliente.e2e@skillswap.test");
+        usuarios.put(PROVEEDOR_2, "proveedor2.e2e@skillswap.test");
+        usuarios.put(CLIENTE_2, "cliente2.e2e@skillswap.test");
         IdentidadAdapter identidad = new IdentidadAdapter(new IdentityClientMock(usuarios));
         NotificacionJpaRepository notificaciones = new NotificacionJpaRepository(gestor);
         PerfilJpaRepository perfilRepo = new PerfilJpaRepository(gestor);
@@ -133,5 +138,45 @@ class RecorridoPrincipalTest {
         // el historial y la bandeja reflejan el recorrido
         assertEquals(EstadoContratacion.COMPLETADA, ui.contrataciones().listarContrataciones(CLIENTE).get(0).estado());
         assertFalse(ui.notificaciones().listarNotificaciones(PROVEEDOR).isEmpty());
+    }
+
+    /* Lo que la UI agrego despues: promocion, horario elegido, reprogramacion, rechazo, politicas y perfiles. Sobre JPA. */
+    @Test
+    void promocionReprogramacionRechazoPoliticasYPerfilSobreJpa() {
+        crearPerfil(PROVEEDOR_2, "Proveedor 2");
+        crearPerfil(CLIENTE_2, "Cliente 2");
+        Publicacion borrador = ui.publicaciones().crearBorrador(PROVEEDOR_2, "Mentoria con promocion", "Descripcion",
+                "Desarrollo backend", Modalidad.REMOTA, 60, 1000);
+        Publicacion publicada = ui.publicaciones().cambiarEstado(PROVEEDOR_2, borrador.id(), EstadoPublicacion.PUBLICADA);
+
+        // promocion persistida: se aplica al precio de la solicitud y el comprobante lo detalla
+        ui.publicaciones().agregarPromocion(PROVEEDOR_2, publicada.id(), "PORCENTUAL", 10, 30);
+        assertEquals(3, ui.contrataciones().franjasDePublicacion(publicada.id()).size());
+        ui.wallet().acreditarDemo(CLIENTE_2, 1000);
+        Contratacion c = ui.contrataciones().solicitar(CLIENTE_2, publicada.id(), "Aprender");
+        assertEquals(900, c.precio());
+        assertFalse(ui.contrataciones().comprobante(CLIENTE_2, c.id()).isBlank());
+
+        // reprogramar: la propone el cliente y la acepta el proveedor (la propuesta llega en el listado)
+        ui.contrataciones().avanzar(PROVEEDOR_2, c.id());
+        List<Franja> libres = ui.contrataciones().franjasParaReprogramar(CLIENTE_2, c.id());
+        assertEquals(2, libres.size());
+        ui.contrataciones().proponerReprogramacion(CLIENTE_2, c.id(), libres.get(0).id());
+        assertTrue(ui.contrataciones().listarContrataciones(PROVEEDOR_2).get(0).propuesta().puedoAceptar());
+        Contratacion aceptada = ui.contrataciones().aceptarReprogramacion(PROVEEDOR_2, c.id());
+        assertNull(aceptada.propuesta());
+        assertEquals(libres.get(0).inicio(), aceptada.fecha());
+
+        // horario elegido y rechazo
+        Contratacion otra = ui.contrataciones().solicitar(CLIENTE_2, publicada.id(), "Otra", libres.get(1).id());
+        assertEquals(libres.get(1).inicio(), otra.fecha());
+        assertEquals(EstadoContratacion.RECHAZADA,
+                ui.contrataciones().rechazar(PROVEEDOR_2, otra.id(), "No puedo").estado());
+
+        // politicas de la demo y perfiles
+        assertFalse(ui.publicaciones().listarPoliticas().isEmpty());
+        assertEquals("Proveedor 2", ui.perfiles().verPerfilDe(publicada.autorId()).nombre());
+        assertEquals("Nombre nuevo", ui.perfiles().actualizar(PROVEEDOR_2, "Nombre nuevo", "Bio").nombre());
+        assertEquals("Bio", ui.perfiles().verPerfil(PROVEEDOR_2).bio());
     }
 }

@@ -120,9 +120,9 @@ Autenticación real, dinero real, chat, videollamadas, despliegue productivo y d
 | Límite | Detalle |
 |---|---|
 | **JPA en el dominio** | Las entidades llevan anotaciones `jakarta.persistence`. Es la práctica del material de la cátedra y evita duplicar clases, pero la consigna §6 dice que el dominio no debería conocer JPA |
-| **La ventana no expone todo** | No hay pantalla para crear perfil, calificar, reprogramar ni cargar promociones. Esas operaciones están implementadas y probadas en los servicios, pero la ventana del kit no tiene botones para ellas |
+| **La ventana no expone todo** | No hay pantalla para crear perfil ni darse de baja (la ventana usa un usuario fijo que ya existe). Calificar, rechazar, reprogramar, promociones, política de cancelación, elegir horario y editar perfil y borradores sí están en la ventana |
 | **`HIBRIDA`** | La ventana ofrece la modalidad híbrida, pero el dominio solo tiene remota y presencial (la consigna §4.2 dice solo eso); se rechaza con un error legible |
-| **Franjas automáticas** | La ventana no carga horarios: el borrador nace con tres franjas diarias desde la semana siguiente, y al solicitar se toma la primera libre |
+| **Franjas automáticas** | La ventana no carga horarios: el borrador nace con tres franjas diarias desde la semana siguiente. Al solicitar se puede elegir una franja libre (por defecto, la primera) |
 | **Promociones sin controller** | El dominio y el cálculo están probados; no hay forma de crearlas desde la ventana |
 | **Reputación fuera de la transacción** | Se recalcula por evento, después de guardar la calificación |
 | **HTML sin escapar en la vista del kit** | `SkillSwapView` arma etiquetas `<html>` concatenando títulos y descripciones. Es código de la cátedra, sin modificar. Swing no ejecuta scripts, pero un `<img>` con una URL externa produciría una petición de red al mostrarse |
