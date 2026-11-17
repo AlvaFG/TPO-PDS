@@ -10,7 +10,7 @@ Se pueden borrar sin que la aplicación deje de compilar, de ejecutarse o de pas
 
 ## El problema que resuelven
 
-StarUML guarda sus diagramas en un archivo `.mdj` (JSON). Un diagrama de este tamaño tiene **147 clases y 234 relaciones**. Dibujarlas a mano y mantenerlas al día cuando el código cambia es inviable: cada clase necesita sus compartimentos de atributos y operaciones, y cada relación varias referencias cruzadas por `_id`. Por eso el `.mdj` se **genera** a partir de una descripción.
+StarUML guarda sus diagramas en un archivo `.mdj` (JSON). Un diagrama de este tamaño tiene **150 clases y 240 relaciones**. Dibujarlas a mano y mantenerlas al día cuando el código cambia es inviable: cada clase necesita sus compartimentos de atributos y operaciones, y cada relación varias referencias cruzadas por `_id`. Por eso el `.mdj` se **genera** a partir de una descripción.
 
 ## Qué hace cada archivo de `diagrama/`
 
@@ -69,7 +69,7 @@ staruml image skillswap.mdj -f png -o "img/<%=filenamify(element.name)%>.png"   
 python3 diagrama/generar_pdf.py             # informe.md → informe.pdf (necesita el paquete markdown y Chrome)
 ```
 
-`generar_mdj.py` tarda porque calcula, para cada una de las 234 relaciones, un camino que esquive las cajas (búsqueda A* sobre una grilla).
+`generar_mdj.py` tarda porque calcula, para cada una de las 240 relaciones, un camino que esquive las cajas (búsqueda A* sobre una grilla).
 
 ## Cosas para tener presentes
 
