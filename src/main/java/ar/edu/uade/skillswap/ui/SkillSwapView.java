@@ -72,10 +72,10 @@ public final class SkillSwapView extends JPanel {
     private void createListing(){
         JTextField title=new JTextField();JTextArea desc=new JTextArea(4,26);
         JComboBox<String> cat=new JComboBox<>(controllers.busqueda().categorias().stream().filter(c->!c.equals("Todas")).toArray(String[]::new));
-        List<Politica> policies=controllers.publicaciones().listarPoliticas();JComboBox<String> policy=new JComboBox<>();policy.addItem("Sin política");for(Politica po:policies)policy.addItem(po.nombre());
-        JPanel form=new JPanel(new GridLayout(0,1,4,5));form.add(new JLabel("Título"));form.add(title);form.add(new JLabel("Descripción"));form.add(new JScrollPane(desc));form.add(new JLabel("Categoría"));form.add(cat);form.add(new JLabel("Política de cancelación"));form.add(policy);
+        List<Politica> policies=controllers.publicaciones().listarPoliticas();JTextField price=new JTextField("150");JTextField minutes=new JTextField("60");JComboBox<Modalidad> mode=new JComboBox<>(new Modalidad[]{Modalidad.REMOTA,Modalidad.PRESENCIAL});JComboBox<String> policy=new JComboBox<>();policy.addItem("Sin política");for(Politica po:policies)policy.addItem(po.nombre());
+        JPanel form=new JPanel(new GridLayout(0,1,4,5));form.add(new JLabel("Título"));form.add(title);form.add(new JLabel("Descripción"));form.add(new JScrollPane(desc));form.add(new JLabel("Categoría"));form.add(cat);form.add(new JLabel("Modalidad"));form.add(mode);form.add(new JLabel("Duración (minutos)"));form.add(minutes);form.add(new JLabel("Precio (SkillCoins)"));form.add(price);form.add(new JLabel("Política de cancelación"));form.add(policy);
         if(JOptionPane.showConfirmDialog(this,form,"Nueva publicación",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE)==JOptionPane.OK_OPTION&&!title.getText().isBlank()){
-            int sel=policy.getSelectedIndex();controllers.publicaciones().crearBorrador(USER_ID,title.getText(),desc.getText(),(String)cat.getSelectedItem(),Modalidad.REMOTA,60,150,sel<=0?null:policies.get(sel-1).id());
+            Integer value=number(price.getText()),duration=number(minutes.getText());if(value==null||duration==null)return;int sel=policy.getSelectedIndex();controllers.publicaciones().crearBorrador(USER_ID,title.getText(),desc.getText(),(String)cat.getSelectedItem(),(Modalidad)mode.getSelectedItem(),duration,value,sel<=0?null:policies.get(sel-1).id());
             message("Borrador creado","La publicación quedó lista para que tus alumnos conecten su flujo real.");showListings();}}
     private void editListing(Publicacion x){
         JTextField title=new JTextField(x.titulo());JTextArea desc=new JTextArea(x.descripcion(),4,26);JTextField price=new JTextField(String.valueOf(x.precio()));
