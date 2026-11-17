@@ -40,7 +40,11 @@ import java.util.Arrays;
 public final class SkillSwapApplication {
     private SkillSwapApplication() {}
 
+    /* Las fuentes del kit son fijas y chicas: se agranda toda la interfaz. Se puede pisar con -Dsun.java2d.uiScale=... */
+    private static final String ESCALA_UI = "1.5";
+
     public static void main(String[] args) throws Exception {
+        if (System.getProperty("sun.java2d.uiScale") == null) System.setProperty("sun.java2d.uiScale", ESCALA_UI);
         boolean real = Arrays.asList(args).contains("--real");
         String[] resto = Arrays.stream(args).filter(a -> !a.equals("--real")).toArray(String[]::new);
         Theme.install();
