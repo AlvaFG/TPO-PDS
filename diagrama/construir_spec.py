@@ -140,6 +140,7 @@ C("Conversor", P, [],
    "static contratacion(d: ContratacionDto): Models.Contratacion",
    "static notificacion(d: NotificacionDto): Models.Notificacion",
    "static movimientos(billetera: BilleteraDto): List<Models.Movimiento>",
+   "static franja(d: FranjaDto): Models.Franja",
    "static perfil(userId: String, d: PerfilPublicoDto): Models.Perfil"],
   est="Pure Fabrication",
   doc="Traduce los DTO de aplicacion a los registros de la UI y los ids String a Long.")
@@ -153,15 +154,26 @@ CONTROLLERS = {
                   "categorias(): List<String>"],
                  ["busqueda: IBusquedaService", "recomendacion: IRecomendacionService"]),
     "Publicacion": (["listarPropias(userId: String): List<Models.Publicacion>",
-                     "crearBorrador(userId: String, titulo: String, descripcion: String, categoria: String, modalidad: Models.Modalidad, duracion: int, precio: int): Models.Publicacion",
-                     "cambiarEstado(userId: String, publicacionId: String, estado: Models.EstadoPublicacion): Models.Publicacion"],
+                     "crearBorrador(userId: String, titulo: String, descripcion: String, categoria: String, modalidad: Models.Modalidad, duracion: int, precio: int, politicaId: String): Models.Publicacion",
+                     "cambiarEstado(userId: String, publicacionId: String, estado: Models.EstadoPublicacion): Models.Publicacion",
+                     "editar(userId: String, publicacionId: String, titulo: String, descripcion: String, precio: int): Models.Publicacion",
+                     "agregarPromocion(userId: String, publicacionId: String, tipo: String, valor: int, diasVigencia: int): void",
+                     "listarPoliticas(): List<Models.Politica>"],
                     ["publicaciones: IPublicacionService", "busqueda: IBusquedaService",
                      "reloj: Clock"]),
     "Contratacion": (["listarContrataciones(userId: String): List<Models.Contratacion>",
-                      "solicitar(userId: String, publicacionId: String, objetivo: String): Models.Contratacion",
+                      "solicitar(userId: String, publicacionId: String, objetivo: String, franjaId: String): Models.Contratacion",
+                      "franjasDePublicacion(publicacionId: String): List<Models.Franja>",
                       "avanzar(userId: String, contratacionId: String): Models.Contratacion",
-                      "cancelar(userId: String, contratacionId: String): Models.Contratacion"],
-                     ["contrataciones: IContratacionService"]),
+                      "rechazar(userId: String, contratacionId: String, motivo: String): Models.Contratacion",
+                      "franjasParaReprogramar(userId: String, contratacionId: String): List<Models.Franja>",
+                      "proponerReprogramacion(userId: String, contratacionId: String, franjaId: String): Models.Contratacion",
+                      "aceptarReprogramacion(userId: String, contratacionId: String): Models.Contratacion",
+                      "cancelar(userId: String, contratacionId: String): Models.Contratacion",
+                      "calificar(userId: String, contratacionId: String, puntaje: int, comentario: String): void",
+                      "comprobante(userId: String, contratacionId: String): String"],
+                     ["contrataciones: IContratacionService", "calificaciones: ICalificacionService",
+                      "publicaciones: IPublicacionService"]),
     "Wallet": (["consultarSaldo(userId: String): int",
                 "listarMovimientos(userId: String): List<Models.Movimiento>",
                 "acreditarDemo(userId: String, importe: int): int"],
@@ -170,7 +182,9 @@ CONTROLLERS = {
                       "marcarLeida(userId: String, notificacionId: String): void",
                       "marcarTodasLeidas(userId: String): void"],
                      ["notificaciones: INotificacionService"]),
-    "Perfil": (["verPerfil(userId: String): Models.Perfil"],
+    "Perfil": (["verPerfil(userId: String): Models.Perfil",
+                "verPerfilDe(perfilId: String): Models.Perfil",
+                "actualizar(userId: String, nombre: String, biografia: String): Models.Perfil"],
                ["perfiles: IPerfilService"]),
 }
 for nombre, (ops, servicios) in CONTROLLERS.items():
@@ -223,14 +237,18 @@ SERVICIOS = {
                 "actualizarPerfil(userId: String, cmd: PerfilCommand): void",
                 "verPerfil(perfilId: Long): PerfilPublicoDto",
                 "verPerfilDeUsuario(userId: String): PerfilPublicoDto",
-                "darDeBaja(userId: String): void"],
+                "darDeBaja(userId: String): void",
+                "actualizarBasico(userId: String, nombreVisible: String, biografia: String): void"],
                ["perfilRepository: IPerfilRepository", "publicacionRepository: IPublicacionRepository",
                 "contratacionRepository: IContratacionRepository", "catalogoRepository: ICatalogoRepository",
                 "billeteraRepository: IBilleteraRepository", "transacciones: IGestorTransacciones"]),
     "Publicacion": (["crearBorrador(userId: String, cmd: PublicacionCommand): Long",
                      "editar(userId: String, publicacionId: Long, cmd: PublicacionCommand): void",
                      "cambiarEstado(userId: String, cmd: CambiarEstadoCommand): void",
-                     "listarPropias(userId: String): List<PublicacionDto>"],
+                     "listarPropias(userId: String): List<PublicacionDto>",
+                     "listarFranjasLibres(publicacionId: Long): List<FranjaDto>",
+                     "listarPoliticas(): List<PoliticaDto>",
+                     "agregarPromocion(userId: String, cmd: PromocionCommand): void"],
                     ["publicacionRepository: IPublicacionRepository", "perfilRepository: IPerfilRepository",
                      "catalogoRepository: ICatalogoRepository",
                      "politicaRepository: IPoliticaCancelacionRepository",
@@ -251,7 +269,8 @@ SERVICIOS = {
                       "completar(userId: String, contratacionId: Long): void",
                       "cancelar(userId: String, contratacionId: Long, motivo: String): long",
                       "listar(userId: String, pagina: int, tamanio: int): Pagina<ContratacionDto>",
-                      "verComprobante(userId: String, contratacionId: Long): ContratacionDto"],
+                      "verComprobante(userId: String, contratacionId: Long): ContratacionDto",
+                      "franjasLibres(userId: String, contratacionId: Long): List<FranjaDto>"],
                      ["contratacionRepository: IContratacionRepository",
                       "publicacionRepository: IPublicacionRepository", "perfilRepository: IPerfilRepository",
                       "billeteraRepository: IBilleteraRepository", "transacciones: IGestorTransacciones",
@@ -297,6 +316,13 @@ C("AccionPublicacion", A, [], ["ejecutar(publicacion: Publicacion, userId: Strin
 C("SolicitarCommand", A, ["publicacionId: Long", "franjaId: Long", "mensaje: String",
                           "objetivo: String"])
 C("CalificarCommand", A, ["contratacionId: Long", "puntaje: int", "comentario: String"])
+C("PromocionCommand", A, ["publicacionId: Long", "tipo: Tipo", "valor: int", "codigo: String",
+                          "diasVigencia: int"],
+  doc="Tipo es un enum anidado: PORCENTUAL o MONTO_FIJO. Vale desde hoy durante diasVigencia dias.")
+C("FranjaDto", A, ["id: Long", "inicio: LocalDateTime"],
+  doc="Franja libre de una publicacion, para elegir al solicitar o reprogramar.")
+C("PoliticaDto", A, ["id: Long", "nombre: String"],
+  doc="Politica de cancelacion disponible al crear una publicacion.")
 C("FiltroBusqueda", A, ["texto: String", "categoriaId: Long", "modalidad: Modalidad",
                         "precioMinimo: Long", "precioMaximo: Long", "habilidadId: Long",
                         "reputacionMinima: Double", "orden: CriterioOrden", "pagina: int",
@@ -309,7 +335,7 @@ C("Pagina<T>", A, ["contenido: List<T>", "numero: int", "tamanio: int", "totalEl
 C("PublicacionDto", A, ["id: Long", "titulo: String", "categoria: String", "modalidad: String",
                         "precio: long", "reputacionAutor: double", "estado: String",
                         "descripcion: String", "duracionMinutos: int", "autor: String",
-                        "etiquetas: List<String>"],
+                        "etiquetas: List<String>", "autorId: Long"],
   ["static desde(p: Publicacion): PublicacionDto"])
 C("CategoriaDto", A, ["id: Long", "nombre: String"],
   ["static desde(c: Categoria): CategoriaDto"])
@@ -319,7 +345,8 @@ C("PerfilPublicoDto", A, ["id: Long", "tipo: String", "nombreVisible: String", "
                           "historialResumido: List<String>"])
 C("ContratacionDto", A, ["id: Long", "publicacion: String", "estado: String", "precio: long",
                          "inicio: LocalDateTime", "detallePrecio: String", "contraparte: String",
-                         "rol: String", "CLIENTE: String", "PROVEEDOR: String"],
+                         "rol: String", "propuestaFecha: LocalDateTime",
+                         "puedeAceptarPropuesta: boolean", "CLIENTE: String", "PROVEEDOR: String"],
   ["static desde(c: Contratacion, userId: String): ContratacionDto"])
 C("NotificacionDto", A, ["id: Long", "tipo: String", "mensaje: String", "fecha: LocalDateTime",
                          "leida: boolean"],
@@ -359,7 +386,8 @@ REPOS = {
     "Catalogo": ["buscarCategoria(id: Long): Optional<Categoria>",
                  "buscarHabilidades(ids: List<Long>): List<Habilidad>",
                  "listarCategorias(): List<Categoria>"],
-    "PoliticaCancelacion": ["buscarPorId(id: Long): Optional<PoliticaCancelacion>"],
+    "PoliticaCancelacion": ["buscarPorId(id: Long): Optional<PoliticaCancelacion>",
+                            "listar(): List<PoliticaCancelacion>"],
 }
 for nombre, ops in REPOS.items():
     I(f"I{nombre}Repository", A, ops,
@@ -859,10 +887,11 @@ dep("EjecutorDeAcciones", "ConflictoConcurrenciaException", "traduce")
 
 # ---- Entradas y salidas de los casos de uso (dependencias punteadas, como en la catedra)
 for serv, dtos in {"PerfilService": ["PerfilCommand", "PerfilPublicoDto"],
-                   "PublicacionService": ["PublicacionCommand", "CambiarEstadoCommand"],
+                   "PublicacionService": ["PublicacionCommand", "CambiarEstadoCommand", "PromocionCommand",
+                                          "FranjaDto", "PoliticaDto"],
                    "BusquedaService": ["FiltroBusqueda", "Pagina<T>"],
                    "RecomendacionService": ["Pagina<T>"],
-                   "ContratacionService": ["SolicitarCommand", "ContratacionDto"],
+                   "ContratacionService": ["SolicitarCommand", "ContratacionDto", "FranjaDto"],
                    "CalificacionService": ["CalificarCommand"],
                    "NotificacionService": ["NotificacionDto"],
                    "BilleteraService": ["BilleteraDto"]}.items():
@@ -888,11 +917,9 @@ diagramas = [
     {"nombre": "Capa Presentacion", "paquetes": [P],
      "clases": [f"I{n}Service" for n in SERVICIOS] + ["IServicioIdentidad"]},
     {"nombre": "Patron State - Publicacion",
-     "clases": ["Publicacion", "EstadoPublicacion", "EstadoPublicacionBase",
-                *ESTADOS_PUB, "EstadoPublicacionFactory", "CambioEstado"]},
+     "clases": ["Publicacion", "EstadoPublicacion", *ESTADOS_PUB, "CambioEstado"]},
     {"nombre": "Patron State - Contratacion",
-     "clases": ["Contratacion", "EstadoContratacion", "EstadoContratacionBase",
-                *ESTADOS_CON, "EstadoContratacionFactory", "CambioEstado",
+     "clases": ["Contratacion", "EstadoContratacion", *ESTADOS_CON, "CambioEstado",
                 "PropuestaReprogramacion"]},
     {"nombre": "Patron Strategy",
      "clases": ["RecomendacionService", "IRecomendacionService", "IEstrategiaRecomendacion",
@@ -922,7 +949,20 @@ diagramas = [
                 "Billetera", "EstadoContratacion", "EventoContratacion", "Calificacion"]},
 ]
 
-spec = {"proyecto": "SkillSwap", "diagrama": "Main", "clases": clases,
+# Main resumido: dominio + servicios y patrones principales. Quedan fuera (siguen en el modelo y en
+# sus vistas por capa/patron): enums, Base y Factory de los State, repositorios, DTOs, adaptadores, UI.
+_fuera = {"EstadoPublicacionBase", "EstadoPublicacionFactory", "EstadoContratacionBase",
+          "EstadoContratacionFactory", "ReglaNegocioException"}
+_enums = {"TipoPerfil", "TipoPublicacion", "Modalidad", "CanalNotificacion", "TipoMovimiento",
+          "TipoEvento"}
+principal = [c["nombre"] for c in clases
+             if (c.get("paquete") == D and c["nombre"] not in _fuera | _enums)] + [
+    "IPerfilService", "IPublicacionService", "IBusquedaService", "IContratacionService",
+    "ICalificacionService", "INotificacionService", "IBilleteraService",
+    "IEventoObserver", "IPublicadorEventos", "ICanalNotificacion", "IServicioIdentidad",
+    "IEstrategiaRecomendacion"]
+
+spec = {"proyecto": "SkillSwap", "diagrama": "Main", "clases": clases, "principal": principal,
         "relaciones": relaciones, "diagramas": diagramas}
 
 if __name__ == "__main__":

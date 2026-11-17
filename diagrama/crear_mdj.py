@@ -632,10 +632,10 @@ def vista_paquete(ids, paquete_elem, diagrama_id, geom):
 
 
 def diagramas_del_spec(spec):
-    """El diagrama principal lleva todas las clases; 'diagramas' agrega vistas parciales."""
+    """El diagrama principal lleva todas las clases (o las de 'principal' si se define); 'diagramas' agrega vistas parciales."""
     todas = [c["nombre"] for c in spec["clases"]]
     paquete_de = {c["nombre"]: c.get("paquete") for c in spec["clases"]}
-    salida = [(spec.get("diagrama", "Main"), todas)]
+    salida = [(spec.get("diagrama", "Main"), list(spec.get("principal", todas)))]
     for d in spec.get("diagramas", []):
         clases = list(d.get("clases", []))
         clases += [n for n in todas

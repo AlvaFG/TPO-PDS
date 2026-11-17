@@ -235,12 +235,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ancho", type=int, default=2600)
     ap.add_argument("--orden", default="")
+    ap.add_argument("--spec", default=os.path.join(RAIZ, "diagrama", "spec.json"))
     ap.add_argument("-o", "--salida", default=os.path.join(RAIZ, "skillswap.mdj"))
     args = ap.parse_args()
     if args.orden:
         ORDEN_PAQUETES[:] = [{"P": "Presentation", "A": "Application", "D": "Domain",
                               "IN": "Infrastructure"}[k] for k in args.orden.split(",")]
-    with open(os.path.join(RAIZ, "diagrama", "spec.json"), encoding="utf-8") as f:
+    with open(args.spec, encoding="utf-8") as f:
         spec = json.load(f)
     cm.validar(spec)
     proyecto = cm.generar(spec, args.ancho)

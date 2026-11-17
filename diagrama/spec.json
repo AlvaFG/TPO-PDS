@@ -134,6 +134,17 @@
      "estatico": true
     },
     {
+     "nombre": "franja",
+     "retorno": "Models.Franja",
+     "parametros": [
+      {
+       "nombre": "d",
+       "tipo": "FranjaDto"
+      }
+     ],
+     "estatico": true
+    },
+    {
      "nombre": "perfil",
      "retorno": "Models.Perfil",
      "parametros": [
@@ -301,6 +312,10 @@
       {
        "nombre": "precio",
        "tipo": "int"
+      },
+      {
+       "nombre": "politicaId",
+       "tipo": "String"
       }
      ]
     },
@@ -321,6 +336,63 @@
        "tipo": "Models.EstadoPublicacion"
       }
      ]
+    },
+    {
+     "nombre": "editar",
+     "retorno": "Models.Publicacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "publicacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "titulo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "descripcion",
+       "tipo": "String"
+      },
+      {
+       "nombre": "precio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "agregarPromocion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "publicacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "tipo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "valor",
+       "tipo": "int"
+      },
+      {
+       "nombre": "diasVigencia",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPoliticas",
+     "retorno": "List<Models.Politica>",
+     "parametros": []
     }
    ],
    "documentacion": "Contrato de la Mock UI Kit para el modulo Publicacion: la UI solo conoce esta interfaz."
@@ -389,6 +461,10 @@
       {
        "nombre": "precio",
        "tipo": "int"
+      },
+      {
+       "nombre": "politicaId",
+       "tipo": "String"
       }
      ]
     },
@@ -409,6 +485,63 @@
        "tipo": "Models.EstadoPublicacion"
       }
      ]
+    },
+    {
+     "nombre": "editar",
+     "retorno": "Models.Publicacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "publicacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "titulo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "descripcion",
+       "tipo": "String"
+      },
+      {
+       "nombre": "precio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "agregarPromocion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "publicacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "tipo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "valor",
+       "tipo": "int"
+      },
+      {
+       "nombre": "diasVigencia",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPoliticas",
+     "retorno": "List<Models.Politica>",
+     "parametros": []
     }
    ],
    "estereotipo": "GRASP Controller",
@@ -445,11 +578,89 @@
       {
        "nombre": "objetivo",
        "tipo": "String"
+      },
+      {
+       "nombre": "franjaId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "franjasDePublicacion",
+     "retorno": "List<Models.Franja>",
+     "parametros": [
+      {
+       "nombre": "publicacionId",
+       "tipo": "String"
       }
      ]
     },
     {
      "nombre": "avanzar",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "franjasParaReprogramar",
+     "retorno": "List<Models.Franja>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "franjaId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
      "retorno": "Models.Contratacion",
      "parametros": [
       {
@@ -475,6 +686,42 @@
        "tipo": "String"
       }
      ]
+    },
+    {
+     "nombre": "calificar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "puntaje",
+       "tipo": "int"
+      },
+      {
+       "nombre": "comentario",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "comprobante",
+     "retorno": "String",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      }
+     ]
     }
    ],
    "documentacion": "Contrato de la Mock UI Kit para el modulo Contratacion: la UI solo conoce esta interfaz."
@@ -487,6 +734,14 @@
     {
      "nombre": "contrataciones",
      "tipo": "IContratacionService"
+    },
+    {
+     "nombre": "calificaciones",
+     "tipo": "ICalificacionService"
+    },
+    {
+     "nombre": "publicaciones",
+     "tipo": "IPublicacionService"
     },
     {
      "nombre": "ejecutor",
@@ -519,6 +774,20 @@
       {
        "nombre": "objetivo",
        "tipo": "String"
+      },
+      {
+       "nombre": "franjaId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "franjasDePublicacion",
+     "retorno": "List<Models.Franja>",
+     "parametros": [
+      {
+       "nombre": "publicacionId",
+       "tipo": "String"
       }
      ]
     },
@@ -537,8 +806,108 @@
      ]
     },
     {
+     "nombre": "rechazar",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "franjasParaReprogramar",
+     "retorno": "List<Models.Franja>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "franjaId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
      "nombre": "cancelar",
      "retorno": "Models.Contratacion",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "calificar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "puntaje",
+       "tipo": "int"
+      },
+      {
+       "nombre": "comentario",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "comprobante",
+     "retorno": "String",
      "parametros": [
       {
        "nombre": "userId",
@@ -761,6 +1130,34 @@
        "tipo": "String"
       }
      ]
+    },
+    {
+     "nombre": "verPerfilDe",
+     "retorno": "Models.Perfil",
+     "parametros": [
+      {
+       "nombre": "perfilId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "actualizar",
+     "retorno": "Models.Perfil",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "nombre",
+       "tipo": "String"
+      },
+      {
+       "nombre": "biografia",
+       "tipo": "String"
+      }
+     ]
     }
    ],
    "documentacion": "Contrato de la Mock UI Kit para el modulo Perfil: la UI solo conoce esta interfaz."
@@ -786,6 +1183,34 @@
      "parametros": [
       {
        "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "verPerfilDe",
+     "retorno": "Models.Perfil",
+     "parametros": [
+      {
+       "nombre": "perfilId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "actualizar",
+     "retorno": "Models.Perfil",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "nombre",
+       "tipo": "String"
+      },
+      {
+       "nombre": "biografia",
        "tipo": "String"
       }
      ]
@@ -981,6 +1406,24 @@
        "tipo": "String"
       }
      ]
+    },
+    {
+     "nombre": "actualizarBasico",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "nombreVisible",
+       "tipo": "String"
+      },
+      {
+       "nombre": "biografia",
+       "tipo": "String"
+      }
+     ]
     }
    ],
    "documentacion": "Puerto de entrada: casos de uso de Perfil."
@@ -1073,6 +1516,24 @@
        "tipo": "String"
       }
      ]
+    },
+    {
+     "nombre": "actualizarBasico",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "nombreVisible",
+       "tipo": "String"
+      },
+      {
+       "nombre": "biografia",
+       "tipo": "String"
+      }
+     ]
     }
    ],
    "estereotipo": "Pure Fabrication",
@@ -1137,6 +1598,35 @@
       {
        "nombre": "userId",
        "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "listarFranjasLibres",
+     "retorno": "List<FranjaDto>",
+     "parametros": [
+      {
+       "nombre": "publicacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPoliticas",
+     "retorno": "List<PoliticaDto>",
+     "parametros": []
+    },
+    {
+     "nombre": "agregarPromocion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "PromocionCommand"
       }
      ]
     }
@@ -1227,6 +1717,35 @@
       {
        "nombre": "userId",
        "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "listarFranjasLibres",
+     "retorno": "List<FranjaDto>",
+     "parametros": [
+      {
+       "nombre": "publicacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "listarPoliticas",
+     "retorno": "List<PoliticaDto>",
+     "parametros": []
+    },
+    {
+     "nombre": "agregarPromocion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "PromocionCommand"
       }
      ]
     }
@@ -1535,6 +2054,20 @@
        "tipo": "Long"
       }
      ]
+    },
+    {
+     "nombre": "franjasLibres",
+     "retorno": "List<FranjaDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
     }
    ],
    "documentacion": "Puerto de entrada: casos de uso de Contratacion."
@@ -1733,6 +2266,20 @@
     {
      "nombre": "verComprobante",
      "retorno": "ContratacionDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "franjasLibres",
+     "retorno": "List<FranjaDto>",
      "parametros": [
       {
        "nombre": "userId",
@@ -2172,6 +2719,69 @@
    "operaciones": []
   },
   {
+   "nombre": "PromocionCommand",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "publicacionId",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "Tipo"
+    },
+    {
+     "nombre": "valor",
+     "tipo": "int"
+    },
+    {
+     "nombre": "codigo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "diasVigencia",
+     "tipo": "int"
+    }
+   ],
+   "operaciones": [],
+   "documentacion": "Tipo es un enum anidado: PORCENTUAL o MONTO_FIJO. Vale desde hoy durante diasVigencia dias."
+  },
+  {
+   "nombre": "FranjaDto",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "inicio",
+     "tipo": "LocalDateTime"
+    }
+   ],
+   "operaciones": [],
+   "documentacion": "Franja libre de una publicacion, para elegir al solicitar o reprogramar."
+  },
+  {
+   "nombre": "PoliticaDto",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [],
+   "documentacion": "Politica de cancelacion disponible al crear una publicacion."
+  },
+  {
    "nombre": "FiltroBusqueda",
    "paquete": "Application",
    "tipo": "clase",
@@ -2340,6 +2950,10 @@
     {
      "nombre": "etiquetas",
      "tipo": "List<String>"
+    },
+    {
+     "nombre": "autorId",
+     "tipo": "Long"
     }
    ],
    "operaciones": [
@@ -2464,6 +3078,14 @@
     {
      "nombre": "rol",
      "tipo": "String"
+    },
+    {
+     "nombre": "propuestaFecha",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "puedeAceptarPropuesta",
+     "tipo": "boolean"
     },
     {
      "nombre": "CLIENTE",
@@ -2914,6 +3536,11 @@
        "tipo": "Long"
       }
      ]
+    },
+    {
+     "nombre": "listar",
+     "retorno": "List<PoliticaCancelacion>",
+     "parametros": []
     }
    ],
    "documentacion": "Puerto de salida de persistencia (Protected Variations: cambiar JPA no toca los casos de uso)."
@@ -3675,6 +4302,11 @@
        "tipo": "Long"
       }
      ]
+    },
+    {
+     "nombre": "listar",
+     "retorno": "List<PoliticaCancelacion>",
+     "parametros": []
     }
    ],
    "documentacion": "Implementacion JPA del puerto. Consultas con JOIN FETCH o proyecciones para evitar N+1."
@@ -6931,6 +7563,60 @@
    "documentacion": "Sabe a quien le interesa cada tipo de evento (Information Expert): solicitud recibida -> proveedor, aceptacion -> cliente, etc."
   }
  ],
+ "principal": [
+  "SkillCoins",
+  "RangoHorario",
+  "CambioEstado",
+  "Perfil",
+  "ElementoCatalogo",
+  "Categoria",
+  "Habilidad",
+  "Publicacion",
+  "FranjaHoraria",
+  "EstadoPublicacion",
+  "EstadoBorrador",
+  "EstadoPublicada",
+  "EstadoPausada",
+  "EstadoCerrada",
+  "EstadoPublicacionCancelada",
+  "PoliticaCancelacion",
+  "PoliticaFlexible",
+  "PoliticaEstricta",
+  "ICalculoPrecio",
+  "PromocionDecorator",
+  "DescuentoPorcentual",
+  "DescuentoMontoFijo",
+  "Promocion",
+  "PromocionPorcentual",
+  "PromocionMontoFijo",
+  "Contratacion",
+  "PropuestaReprogramacion",
+  "EstadoContratacion",
+  "EstadoPendiente",
+  "EstadoAceptada",
+  "EstadoConfirmada",
+  "EstadoEnCurso",
+  "EstadoCompletada",
+  "EstadoRechazada",
+  "EstadoContratacionCancelada",
+  "Billetera",
+  "MovimientoCredito",
+  "Calificacion",
+  "Notificacion",
+  "EventoContratacion",
+  "IPerfilService",
+  "IPublicacionService",
+  "IBusquedaService",
+  "IContratacionService",
+  "ICalificacionService",
+  "INotificacionService",
+  "IBilleteraService",
+  "IEventoObserver",
+  "IPublicadorEventos",
+  "ICanalNotificacion",
+  "IServicioIdentidad",
+  "IEstrategiaRecomendacion"
+ ],
  "relaciones": [
   {
    "tipo": "realizacion",
@@ -7017,6 +7703,24 @@
    "tipo": "asociacion",
    "origen": "ContratacionControllerImpl",
    "destino": "IContratacionService",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionControllerImpl",
+   "destino": "ICalificacionService",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "usa",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionControllerImpl",
+   "destino": "IPublicacionService",
    "mult_origen": "0..*",
    "mult_destino": "1",
    "nombre": "usa",
@@ -8526,6 +9230,24 @@
   },
   {
    "tipo": "dependencia",
+   "origen": "PublicacionService",
+   "destino": "PromocionCommand",
+   "nombre": "recibe"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PublicacionService",
+   "destino": "FranjaDto",
+   "nombre": "devuelve"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "PublicacionService",
+   "destino": "PoliticaDto",
+   "nombre": "devuelve"
+  },
+  {
+   "tipo": "dependencia",
    "origen": "BusquedaService",
    "destino": "FiltroBusqueda",
    "nombre": "recibe"
@@ -8552,6 +9274,12 @@
    "tipo": "dependencia",
    "origen": "ContratacionService",
    "destino": "ContratacionDto",
+   "nombre": "devuelve"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ContratacionService",
+   "destino": "FranjaDto",
    "nombre": "devuelve"
   },
   {
@@ -8652,13 +9380,11 @@
    "clases": [
     "Publicacion",
     "EstadoPublicacion",
-    "EstadoPublicacionBase",
     "EstadoBorrador",
     "EstadoPublicada",
     "EstadoPausada",
     "EstadoCerrada",
     "EstadoPublicacionCancelada",
-    "EstadoPublicacionFactory",
     "CambioEstado"
    ]
   },
@@ -8667,7 +9393,6 @@
    "clases": [
     "Contratacion",
     "EstadoContratacion",
-    "EstadoContratacionBase",
     "EstadoPendiente",
     "EstadoAceptada",
     "EstadoConfirmada",
@@ -8675,7 +9400,6 @@
     "EstadoCompletada",
     "EstadoRechazada",
     "EstadoContratacionCancelada",
-    "EstadoContratacionFactory",
     "CambioEstado",
     "PropuestaReprogramacion"
    ]
