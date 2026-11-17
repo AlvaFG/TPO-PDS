@@ -143,7 +143,10 @@ public final class SkillSwapView extends JPanel {
         controllers.perfiles().actualizar(USER_ID,name.getText(),bio.getText());showProfile();}
     private void showProviderProfile(Publicacion x){
         Perfil o=controllers.perfiles().verPerfilDe(x.autorId());
-        message(o.nombre(),"<html><div style='width:320px'><b>"+o.rol()+"</b><br><br>"+o.bio()+"<br><br>★ "+o.reputacion()+" · "+o.resenas()+" reseñas · "+o.proyectosCompletados()+" proyectos<br>Habilidades: "+String.join(", ",o.habilidades())+"</div></html>");}
+        /* Texto plano: nombre, bio y habilidades los escribe otro usuario y no deben interpretarse como HTML. */
+        JTextArea text=new JTextArea(o.rol()+"\n\n"+o.bio()+"\n\n★ "+o.reputacion()+" · "+o.resenas()+" reseñas · "+o.proyectosCompletados()+" proyectos\nHabilidades: "+String.join(", ",o.habilidades()),9,34);
+        text.setEditable(false);text.setLineWrap(true);text.setWrapStyleWord(true);text.setOpaque(false);
+        JOptionPane.showMessageDialog(this,text,o.nombre(),JOptionPane.INFORMATION_MESSAGE);}
 
     private JLabel pill(String text,Color color){JLabel l=label(text,new Font("SansSerif",Font.BOLD,10),Color.WHITE);l.setOpaque(true);l.setBackground(color);l.setBorder(new EmptyBorder(6,9,6,9));return l;}
     private JLabel avatar(String initials,int size){JLabel a=new JLabel(initials,SwingConstants.CENTER);a.setPreferredSize(new Dimension(size,size));a.setMinimumSize(new Dimension(size,size));a.setMaximumSize(new Dimension(size,size));a.setOpaque(true);a.setBackground(TEAL);a.setForeground(Color.WHITE);a.setFont(new Font("SansSerif",Font.BOLD,size/3));a.setBorder(BorderFactory.createLineBorder(new Color(255,255,255,100),2,true));return a;}
