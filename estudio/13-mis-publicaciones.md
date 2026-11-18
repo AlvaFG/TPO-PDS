@@ -82,7 +82,20 @@ SkillSwapView ──▶ UiControllers ──▶ PublicacionControllerImpl ──
   - `Publicacion` es el contexto y delega cada acción en su `estado` (`domain/model/Publicacion.java`: atributo `estado` en la línea 89, acciones `publicar`, `pausar`, `reanudar`, `cerrar` y `cancelar` en las líneas 166 a 189).
   - `EstadoPublicacion` es la interfaz del estado (`domain/estado/publicacion/EstadoPublicacion.java`, línea 8). `EstadoPublicacionBase` rechaza toda transición con `ReglaNegocioException` (`EstadoPublicacionBase.java`, clase en la línea 10, métodos por defecto desde la línea 13), y cada estado concreto redefine solo lo que permite. Los estados concretos son `EstadoBorrador`, `EstadoPublicada`, `EstadoPausada`, `EstadoCerrada` y `EstadoPublicacionCancelada`, todos en la misma carpeta.
   - Ejemplo: `EstadoBorrador.publicar()` (`EstadoBorrador.java`, líneas 15 a 18) llama a `validarPublicable()` y luego a `cambiarEstado(new EstadoPublicada(), ...)`. `EstadoBorrador` es el único estado editable (`esEditable()`, línea 26).
-  - `cambiarEstado` (`Publicacion.java`, líneas 191 a 195) es el único punto que cambia el estado y deja una entrada en el historial (`CambioEstado`).
+  - `cambiarEstado` (`domain/model/Publicacion.java`, líneas 191 a 195) es el único punto que cambia el estado. Ningún estado asigna `estado` directamente: todos terminan llamando a este método, que hace tres cosas juntas y siempre:
+    1. agrega al `historial` un `CambioEstado` (cuándo, quién, estado origen, estado destino y motivo);
+    2. reemplaza el objeto `estado`, que es lo que cambia el comportamiento;
+    3. actualiza `nombreEstado`, el texto que se guarda en la base.
+
+    Así no se puede cambiar el estado sin dejar registro ni olvidarse de actualizar la base. Recorrido al publicar un borrador:
+
+    ```
+    EstadoBorrador.publicar()
+       └─▶ p.cambiarEstado(new EstadoPublicada(), actorId, "Publicada")   ← Publicacion.java 191–195
+              ├─ historial.add(CambioEstado: BORRADOR → PUBLICADA)
+              ├─ estado = EstadoPublicada
+              └─ nombreEstado = "PUBLICADA"
+    ```
   - Reconstrucción al cargar de la base: `@PostLoad` en `Publicacion.java` (línea 112) llama a `EstadoPublicacionFactory.desdeNombre(...)` (`EstadoPublicacionFactory.java`, clase en la línea 6).
 - **Decorator:** `Publicacion.cotizar(fecha)` arma la cadena de promociones vigentes sobre el precio base. `Promocion.decorar(precio)` crea el decorador (GRASP Creator).
 - **Strategy:** la `PoliticaCancelacion` (flexible o estricta) se elige al crear la publicación.
