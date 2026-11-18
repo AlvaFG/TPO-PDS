@@ -61,25 +61,40 @@ public final class SkillSwapView extends JPanel {
         if(own.isEmpty()){p.add(empty("Todavía no publicaste servicios","Creá tu primera propuesta para comenzar a compartir tu talento."));}
         else for(Publicacion x:own){
             JPanel row=card(new BorderLayout(12,0));row.setMaximumSize(new Dimension(Integer.MAX_VALUE,90));
-            row.add(label(x.titulo(),H3,TEXT));row.add(pill(x.estado().name(),x.estado()==EstadoPublicacion.PUBLICADA?TEAL:MUTED),BorderLayout.CENTER);
-            JPanel actions=new JPanel(new FlowLayout(FlowLayout.RIGHT,8,0));actions.setOpaque(false);
+            row.add(label(x.titulo(),H3,TEXT),BorderLayout.CENTER);
+            JPanel actions=new JPanel(new FlowLayout(FlowLayout.RIGHT,8,0));actions.setOpaque(false);actions.add(pill(x.estado().name(),x.estado()==EstadoPublicacion.PUBLICADA?TEAL:MUTED));
             if(x.estado()==EstadoPublicacion.BORRADOR){JButton edit=button("Editar",false);edit.addActionListener(e->editListing(x));actions.add(edit);}
-            JButton promo=button("Promoción",false);promo.addActionListener(e->addPromotion(x));actions.add(promo);
-            JButton toggle=button(x.estado()==EstadoPublicacion.PUBLICADA?"Pausar":"Publicar",false);toggle.addActionListener(e->{controllers.publicaciones().cambiarEstado(USER_ID,x.id(),x.estado()==EstadoPublicacion.PUBLICADA?EstadoPublicacion.PAUSADA:EstadoPublicacion.PUBLICADA);showListings();});actions.add(toggle);
+            boolean final_=x.estado()==EstadoPublicacion.CERRADA||x.estado()==EstadoPublicacion.CANCELADA;
+            if(!final_){
+                JButton promo=button("Promoción",false);promo.addActionListener(e->addPromotion(x));actions.add(promo);
+                JButton toggle=button(x.estado()==EstadoPublicacion.PUBLICADA?"Pausar":"Publicar",false);toggle.addActionListener(e->{controllers.publicaciones().cambiarEstado(USER_ID,x.id(),x.estado()==EstadoPublicacion.PUBLICADA?EstadoPublicacion.PAUSADA:EstadoPublicacion.PUBLICADA);showListings();});actions.add(toggle);
+                if(x.estado()!=EstadoPublicacion.BORRADOR){JButton close=button("Cerrar",false);close.addActionListener(e->terminar(x,EstadoPublicacion.CERRADA,"Cerrar"));actions.add(close);}
+                JButton cancel=button("Cancelar",false);cancel.addActionListener(e->terminar(x,EstadoPublicacion.CANCELADA,"Cancelar"));actions.add(cancel);}
             row.add(actions,BorderLayout.EAST);p.add(row);p.add(Box.createVerticalStrut(10));}
         page("Mis publicaciones",p);}
+
+    /* Formulario de dos columnas (etiqueta, campo): cada fila toma su altura natural, a diferencia de GridLayout(0,1). */
+    private JPanel formulario(Object... filas){
+        JPanel f=new JPanel(new GridBagLayout());GridBagConstraints c=new GridBagConstraints();c.insets=new Insets(3,4,3,4);c.anchor=GridBagConstraints.WEST;
+        for(int i=0;i<filas.length;i+=2){c.gridy=i/2;c.gridx=0;c.weightx=0;c.fill=GridBagConstraints.NONE;f.add(new JLabel((String)filas[i]),c);c.gridx=1;c.weightx=1;c.fill=GridBagConstraints.HORIZONTAL;f.add((Component)filas[i+1],c);}
+        return f;}
+
+    /* Cerrar y cancelar son estados finales: se confirma antes de aplicarlos. */
+    private void terminar(Publicacion x,EstadoPublicacion destino,String accion){
+        if(JOptionPane.showConfirmDialog(this,accion+" \""+x.titulo()+"\"? No se puede deshacer.",accion+" publicación",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE)!=JOptionPane.YES_OPTION)return;
+        controllers.publicaciones().cambiarEstado(USER_ID,x.id(),destino);showListings();}
 
     private void createListing(){
         JTextField title=new JTextField();JTextArea desc=new JTextArea(4,26);
         JComboBox<String> cat=new JComboBox<>(controllers.busqueda().categorias().stream().filter(c->!c.equals("Todas")).toArray(String[]::new));
         List<Politica> policies=controllers.publicaciones().listarPoliticas();JTextField price=new JTextField("150");JTextField minutes=new JTextField("60");JComboBox<Modalidad> mode=new JComboBox<>(new Modalidad[]{Modalidad.REMOTA,Modalidad.PRESENCIAL});JComboBox<String> policy=new JComboBox<>();policy.addItem("Sin política");for(Politica po:policies)policy.addItem(po.nombre());
-        JPanel form=new JPanel(new GridLayout(0,1,4,5));form.add(new JLabel("Título"));form.add(title);form.add(new JLabel("Descripción"));form.add(new JScrollPane(desc));form.add(new JLabel("Categoría"));form.add(cat);form.add(new JLabel("Modalidad"));form.add(mode);form.add(new JLabel("Duración (minutos)"));form.add(minutes);form.add(new JLabel("Precio (SkillCoins)"));form.add(price);form.add(new JLabel("Política de cancelación"));form.add(policy);
+        JPanel form=formulario("Título",title,"Descripción",new JScrollPane(desc),"Categoría",cat,"Modalidad",mode,"Duración (minutos)",minutes,"Precio (SkillCoins)",price,"Política de cancelación",policy);
         if(JOptionPane.showConfirmDialog(this,form,"Nueva publicación",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE)==JOptionPane.OK_OPTION&&!title.getText().isBlank()){
             Integer value=number(price.getText()),duration=number(minutes.getText());if(value==null||duration==null)return;int sel=policy.getSelectedIndex();controllers.publicaciones().crearBorrador(USER_ID,title.getText(),desc.getText(),(String)cat.getSelectedItem(),(Modalidad)mode.getSelectedItem(),duration,value,sel<=0?null:policies.get(sel-1).id());
             message("Borrador creado","La publicación quedó lista para que tus alumnos conecten su flujo real.");showListings();}}
     private void editListing(Publicacion x){
         JTextField title=new JTextField(x.titulo());JTextArea desc=new JTextArea(x.descripcion(),4,26);JTextField price=new JTextField(String.valueOf(x.precio()));
-        JPanel form=new JPanel(new GridLayout(0,1,4,5));form.add(new JLabel("Título"));form.add(title);form.add(new JLabel("Descripción"));form.add(new JScrollPane(desc));form.add(new JLabel("Precio (SkillCoins)"));form.add(price);
+        JPanel form=formulario("Título",title,"Descripción",new JScrollPane(desc),"Precio (SkillCoins)",price);
         if(JOptionPane.showConfirmDialog(this,form,"Editar publicación",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE)!=JOptionPane.OK_OPTION)return;
         Integer value=number(price.getText());if(value==null)return;
         controllers.publicaciones().editar(USER_ID,x.id(),title.getText(),desc.getText(),value);showListings();}
@@ -138,7 +153,7 @@ public final class SkillSwapView extends JPanel {
     private void showProfile(){Perfil x=controllers.perfiles().verPerfil(USER_ID);JPanel p=base();JPanel hero=card(new BorderLayout(20,0));hero.setMaximumSize(new Dimension(Integer.MAX_VALUE,180));hero.add(avatar("MS",86),BorderLayout.WEST);JPanel data=new JPanel();data.setOpaque(false);data.setLayout(new BoxLayout(data,BoxLayout.Y_AXIS));data.add(label(x.nombre(),H1,TEXT));data.add(label(x.rol(),H3,TEAL_DARK));data.add(Box.createVerticalStrut(10));data.add(label("<html><div style='width:570px'>"+x.bio()+"</div></html>",BODY,MUTED));hero.add(data);JPanel stats=new JPanel(new GridLayout(3,1,0,4));stats.setOpaque(false);stats.add(label("★ "+x.reputacion()+" reputación",H3,GOLD));stats.add(label(x.resenas()+" reseñas",BODY,MUTED));stats.add(label(x.proyectosCompletados()+" proyectos",BODY,MUTED));hero.add(stats,BorderLayout.EAST);hero.setAlignmentX(LEFT_ALIGNMENT);p.add(hero);p.add(Box.createVerticalStrut(24));addSection(p,"Habilidades",null);JPanel tags=new JPanel(new FlowLayout(FlowLayout.LEFT,8,0));tags.setOpaque(false);for(String s:x.habilidades())tags.add(pill(s,NAVY_2));tags.setAlignmentX(LEFT_ALIGNMENT);p.add(tags);p.add(Box.createVerticalStrut(18));JButton edit=button("Editar perfil",false);edit.setAlignmentX(LEFT_ALIGNMENT);edit.addActionListener(e->editProfile(x));p.add(edit);page("Mi perfil",p);}
     private void editProfile(Perfil x){
         JTextField name=new JTextField(x.nombre());JTextArea bio=new JTextArea(x.bio(),4,26);
-        JPanel form=new JPanel(new GridLayout(0,1,4,5));form.add(new JLabel("Nombre visible"));form.add(name);form.add(new JLabel("Biografía"));form.add(new JScrollPane(bio));
+        JPanel form=formulario("Nombre visible",name,"Biografía",new JScrollPane(bio));
         if(JOptionPane.showConfirmDialog(this,form,"Editar perfil",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE)!=JOptionPane.OK_OPTION)return;
         controllers.perfiles().actualizar(USER_ID,name.getText(),bio.getText());showProfile();}
     private void showProviderProfile(Publicacion x){

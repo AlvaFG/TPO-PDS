@@ -1,0 +1,3695 @@
+{
+ "proyecto": "SkillSwap (simplificado)",
+ "diagrama": "Main",
+ "clases": [
+  {
+   "nombre": "Perfil",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "userId",
+     "tipo": "String"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "TipoPerfil"
+    },
+    {
+     "nombre": "nombreVisible",
+     "tipo": "String"
+    },
+    {
+     "nombre": "biografia",
+     "tipo": "String"
+    },
+    {
+     "nombre": "zonaHoraria",
+     "tipo": "ZoneId"
+    },
+    {
+     "nombre": "habilidades",
+     "tipo": "List<Habilidad>"
+    },
+    {
+     "nombre": "intereses",
+     "tipo": "List<Habilidad>"
+    },
+    {
+     "nombre": "disponibilidad",
+     "tipo": "List<RangoHorario>"
+    },
+    {
+     "nombre": "canales",
+     "tipo": "Set<CanalNotificacion>"
+    },
+    {
+     "nombre": "reputacion",
+     "tipo": "double"
+    },
+    {
+     "nombre": "cantidadCalificaciones",
+     "tipo": "int"
+    },
+    {
+     "nombre": "activo",
+     "tipo": "boolean"
+    },
+    {
+     "nombre": "version",
+     "tipo": "long"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "actualizarDatos",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "nombreVisible",
+       "tipo": "String"
+      },
+      {
+       "nombre": "biografia",
+       "tipo": "String"
+      },
+      {
+       "nombre": "zonaHoraria",
+       "tipo": "ZoneId"
+      }
+     ]
+    },
+    {
+     "nombre": "definirHabilidades",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "habilidades",
+       "tipo": "List<Habilidad>"
+      },
+      {
+       "nombre": "intereses",
+       "tipo": "List<Habilidad>"
+      }
+     ]
+    },
+    {
+     "nombre": "definirDisponibilidad",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "rangos",
+       "tipo": "List<RangoHorario>"
+      }
+     ]
+    },
+    {
+     "nombre": "elegirCanales",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "canales",
+       "tipo": "Set<CanalNotificacion>"
+      }
+     ]
+    },
+    {
+     "nombre": "recalcularReputacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "calificaciones",
+       "tipo": "List<Calificacion>"
+      }
+     ]
+    },
+    {
+     "nombre": "puedePublicar",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "tipo",
+       "tipo": "TipoPublicacion"
+      }
+     ]
+    },
+    {
+     "nombre": "darDeBaja",
+     "retorno": "void",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Information Expert",
+   "documentacion": "Referencia el userId del servicio de identidad. La reputacion no tiene setter: solo se recalcula desde calificaciones verificadas. Baja logica (activo=false)."
+  },
+  {
+   "nombre": "Publicacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "autor",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "TipoPublicacion"
+    },
+    {
+     "nombre": "titulo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "descripcion",
+     "tipo": "String"
+    },
+    {
+     "nombre": "categoria",
+     "tipo": "Categoria"
+    },
+    {
+     "nombre": "habilidades",
+     "tipo": "List<Habilidad>"
+    },
+    {
+     "nombre": "modalidad",
+     "tipo": "Modalidad"
+    },
+    {
+     "nombre": "duracionMinutos",
+     "tipo": "int"
+    },
+    {
+     "nombre": "cupo",
+     "tipo": "int"
+    },
+    {
+     "nombre": "cuposOcupados",
+     "tipo": "int"
+    },
+    {
+     "nombre": "precioBase",
+     "tipo": "SkillCoins"
+    },
+    {
+     "nombre": "etiquetas",
+     "tipo": "Set<String>"
+    },
+    {
+     "nombre": "franjas",
+     "tipo": "List<FranjaHoraria>"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "EstadoPublicacion"
+    },
+    {
+     "nombre": "nombreEstado",
+     "tipo": "String"
+    },
+    {
+     "nombre": "politicaCancelacion",
+     "tipo": "PoliticaCancelacion"
+    },
+    {
+     "nombre": "promociones",
+     "tipo": "List<Promocion>"
+    },
+    {
+     "nombre": "historial",
+     "tipo": "List<CambioEstado>"
+    },
+    {
+     "nombre": "fechaPublicacion",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "version",
+     "tipo": "long"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "editar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "titulo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "descripcion",
+       "tipo": "String"
+      },
+      {
+       "nombre": "precioBase",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      }
+     ]
+    },
+    {
+     "nombre": "pausar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "reanudar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cerrar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cambiarEstado",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "nuevo",
+       "tipo": "EstadoPublicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "validarPublicable",
+     "retorno": "void",
+     "parametros": []
+    },
+    {
+     "nombre": "admiteSolicitudes",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "reservarCupo",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "liberarCupo",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "agregarFranja",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "agregarPromocion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "promocion",
+       "tipo": "Promocion"
+      }
+     ]
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cotizar",
+     "retorno": "ICalculoPrecio",
+     "parametros": [
+      {
+       "nombre": "fecha",
+       "tipo": "LocalDate"
+      }
+     ]
+    },
+    {
+     "nombre": "calcularPrecio",
+     "retorno": "SkillCoins",
+     "parametros": []
+    },
+    {
+     "nombre": "getDescripcion",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "esAutor",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Contexto / Decorator · Componente concreto",
+   "documentacion": "Invariantes: publicar exige titulo, categoria, precio >= 0 y al menos una franja. @Version evita sobreventa de cupos (optimistic locking). El estado se persiste como nombreEstado y se reconstruye en @PostLoad con EstadoPublicacionFactory."
+  },
+  {
+   "nombre": "Contratacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "publicacion",
+     "tipo": "Publicacion"
+    },
+    {
+     "nombre": "cliente",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "proveedor",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "mensaje",
+     "tipo": "String"
+    },
+    {
+     "nombre": "objetivo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "franja",
+     "tipo": "FranjaHoraria"
+    },
+    {
+     "nombre": "precioAcordado",
+     "tipo": "SkillCoins"
+    },
+    {
+     "nombre": "detallePrecio",
+     "tipo": "String"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "EstadoContratacion"
+    },
+    {
+     "nombre": "nombreEstado",
+     "tipo": "String"
+    },
+    {
+     "nombre": "propuesta",
+     "tipo": "PropuestaReprogramacion"
+    },
+    {
+     "nombre": "historial",
+     "tipo": "List<CambioEstado>"
+    },
+    {
+     "nombre": "calificadaPorCliente",
+     "tipo": "boolean"
+    },
+    {
+     "nombre": "calificadaPorProveedor",
+     "tipo": "boolean"
+    },
+    {
+     "nombre": "version",
+     "tipo": "long"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "nuevaFranja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "calificar",
+     "retorno": "Calificacion",
+     "parametros": [
+      {
+       "nombre": "autorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "puntaje",
+       "tipo": "int"
+      },
+      {
+       "nombre": "comentario",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cambiarEstado",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "nuevo",
+       "tipo": "EstadoContratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "registrarPropuesta",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "nuevaFranja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aplicarPropuesta",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esCliente",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esProveedor",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esParticipante",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "contraparteDe",
+     "retorno": "Perfil",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Contexto",
+   "documentacion": "Se crea con Publicacion.cotizar(): guarda precioAcordado y detallePrecio como foto. El cliente no puede ser el autor. Si cancela el proveedor se reintegra el 100 %; si cancela el cliente decide la PoliticaCancelacion."
+  },
+  {
+   "nombre": "Billetera",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "titular",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "saldo",
+     "tipo": "SkillCoins"
+    },
+    {
+     "nombre": "movimientos",
+     "tipo": "List<MovimientoCredito>"
+    },
+    {
+     "nombre": "version",
+     "tipo": "long"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "debitar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "monto",
+       "tipo": "SkillCoins"
+      },
+      {
+       "nombre": "concepto",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "acreditar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "monto",
+       "tipo": "SkillCoins"
+      },
+      {
+       "nombre": "tipo",
+       "tipo": "TipoMovimiento"
+      },
+      {
+       "nombre": "concepto",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "tieneSaldo",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "monto",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "yaPago",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Information Expert",
+   "documentacion": "No permite saldo negativo ni un segundo debito para la misma contratacion (ademas de UNIQUE(billetera_id, contratacion_id, tipo) en la base)."
+  },
+  {
+   "nombre": "MovimientoCredito",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "TipoMovimiento"
+    },
+    {
+     "nombre": "monto",
+     "tipo": "SkillCoins"
+    },
+    {
+     "nombre": "concepto",
+     "tipo": "String"
+    },
+    {
+     "nombre": "contratacionId",
+     "tipo": "Long"
+    }
+   ],
+   "operaciones": []
+  },
+  {
+   "nombre": "Calificacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "contratacion",
+     "tipo": "Contratacion"
+    },
+    {
+     "nombre": "autor",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "calificado",
+     "tipo": "Perfil"
+    },
+    {
+     "nombre": "puntaje",
+     "tipo": "int"
+    },
+    {
+     "nombre": "comentario",
+     "tipo": "String"
+    },
+    {
+     "nombre": "PUNTAJE_MINIMO",
+     "tipo": "int"
+    },
+    {
+     "nombre": "PUNTAJE_MAXIMO",
+     "tipo": "int"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "validarPuntaje",
+     "retorno": "void",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Verificada: solo la crea una Contratacion COMPLETADA, una por participante, y nunca con autor = calificado."
+  },
+  {
+   "nombre": "Notificacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "destinatarioId",
+     "tipo": "String"
+    },
+    {
+     "nombre": "canal",
+     "tipo": "CanalNotificacion"
+    },
+    {
+     "nombre": "tipoEvento",
+     "tipo": "TipoEvento"
+    },
+    {
+     "nombre": "mensaje",
+     "tipo": "String"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "leida",
+     "tipo": "boolean"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "marcarLeida",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nombre": "FranjaHoraria",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "inicio",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "fin",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "ocupada",
+     "tipo": "boolean"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "ocupar",
+     "retorno": "void",
+     "parametros": []
+    },
+    {
+     "nombre": "liberar",
+     "retorno": "void",
+     "parametros": []
+    },
+    {
+     "nombre": "seSuperponeCon",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "otra",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "estaLibre",
+     "retorno": "boolean",
+     "parametros": []
+    }
+   ]
+  },
+  {
+   "nombre": "SkillCoins",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "cantidad",
+     "tipo": "long"
+    },
+    {
+     "nombre": "CERO",
+     "tipo": "SkillCoins"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "sumar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "otro",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "restar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "otro",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "restarHastaCero",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "otro",
+       "tipo": "SkillCoins"
+      }
+     ]
+    },
+    {
+     "nombre": "porcentaje",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "valor",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "esMenorQue",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "otro",
+       "tipo": "SkillCoins"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Value Object",
+   "documentacion": "Inmutable y nunca negativo: restar lanza ReglaNegocioException si el resultado seria negativo."
+  },
+  {
+   "nombre": "CambioEstado",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    },
+    {
+     "nombre": "actorId",
+     "tipo": "String"
+    },
+    {
+     "nombre": "estadoAnterior",
+     "tipo": "String"
+    },
+    {
+     "nombre": "estadoNuevo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "motivo",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [],
+   "estereotipo": "Value Object",
+   "documentacion": "Registro inmutable del historial: solo se agrega, nunca se edita."
+  },
+  {
+   "nombre": "PropuestaReprogramacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "nuevaFranja",
+     "tipo": "FranjaHoraria"
+    },
+    {
+     "nombre": "propuestaPor",
+     "tipo": "String"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "puedeAceptarla",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Value Object",
+   "documentacion": "La acepta solo la contraparte de quien la propuso."
+  },
+  {
+   "nombre": "EventoContratacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "tipo",
+     "tipo": "TipoEvento"
+    },
+    {
+     "nombre": "contratacionId",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "clienteId",
+     "tipo": "String"
+    },
+    {
+     "nombre": "proveedorId",
+     "tipo": "String"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "LocalDateTime"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "de",
+     "retorno": "EventoContratacion",
+     "parametros": [
+      {
+       "nombre": "contratacion",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "tipo",
+       "tipo": "TipoEvento"
+      }
+     ],
+     "estatico": true
+    },
+    {
+     "nombre": "destinatarios",
+     "retorno": "List<String>",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Evento de dominio",
+   "documentacion": "Sabe a quien le interesa cada tipo de evento (Information Expert): solicitud recibida -> proveedor, aceptacion -> cliente, etc."
+  },
+  {
+   "nombre": "ElementoCatalogo",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "contiene",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "elemento",
+       "tipo": "ElementoCatalogo"
+      }
+     ],
+     "abstracta": true
+    },
+    {
+     "nombre": "listarHabilidades",
+     "retorno": "List<Habilidad>",
+     "parametros": [],
+     "abstracta": true
+    }
+   ],
+   "abstracta": true,
+   "estereotipo": "Composite · Componente"
+  },
+  {
+   "nombre": "Categoria",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "hijos",
+     "tipo": "List<ElementoCatalogo>"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "agregar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "elemento",
+       "tipo": "ElementoCatalogo"
+      }
+     ]
+    },
+    {
+     "nombre": "quitar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "elemento",
+       "tipo": "ElementoCatalogo"
+      }
+     ]
+    },
+    {
+     "nombre": "contiene",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "elemento",
+       "tipo": "ElementoCatalogo"
+      }
+     ]
+    },
+    {
+     "nombre": "listarHabilidades",
+     "retorno": "List<Habilidad>",
+     "parametros": []
+    },
+    {
+     "nombre": "listarSubcategoriaIds",
+     "retorno": "List<Long>",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Composite · Compuesto"
+  },
+  {
+   "nombre": "Habilidad",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "contiene",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "elemento",
+       "tipo": "ElementoCatalogo"
+      }
+     ]
+    },
+    {
+     "nombre": "listarHabilidades",
+     "retorno": "List<Habilidad>",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "Composite · Hoja"
+  },
+  {
+   "nombre": "EstadoPublicacion",
+   "paquete": "Domain",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pausar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "reanudar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cerrar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esEditable",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "admiteSolicitudes",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "State: rol Estado."
+  },
+  {
+   "nombre": "EstadoBorrador",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esEditable",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoPublicada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "pausar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cerrar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "admiteSolicitudes",
+     "retorno": "boolean",
+     "parametros": []
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoPausada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "reanudar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cerrar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "esVisiblePara",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "p",
+       "tipo": "Publicacion"
+      },
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoContratacion",
+   "paquete": "Domain",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "permiteCalificar",
+     "retorno": "boolean",
+     "parametros": []
+    }
+   ],
+   "documentacion": "State: rol Estado."
+  },
+  {
+   "nombre": "EstadoPendiente",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoAceptada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoConfirmada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "franja",
+       "tipo": "FranjaHoraria"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      },
+      {
+       "nombre": "ahora",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cliente",
+       "tipo": "Billetera"
+      },
+      {
+       "nombre": "proveedor",
+       "tipo": "Billetera"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoEnCurso",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "c",
+       "tipo": "Contratacion"
+      },
+      {
+       "nombre": "actorId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "EstadoCompletada",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "permiteCalificar",
+     "retorno": "boolean",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "State · Estado concreto"
+  },
+  {
+   "nombre": "PoliticaCancelacion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "String"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "calcularReintegro",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "pagado",
+       "tipo": "SkillCoins"
+      },
+      {
+       "nombre": "inicio",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cancelacion",
+       "tipo": "LocalDateTime"
+      }
+     ],
+     "abstracta": true
+    }
+   ],
+   "abstracta": true,
+   "estereotipo": "Strategy · Estrategia",
+   "documentacion": "Entidad abstracta con @Inheritance(SINGLE_TABLE): cada publicacion referencia la politica elegida por su autor."
+  },
+  {
+   "nombre": "PoliticaFlexible",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "horasReintegroTotal",
+     "tipo": "int"
+    },
+    {
+     "nombre": "horasReintegroParcial",
+     "tipo": "int"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "calcularReintegro",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "pagado",
+       "tipo": "SkillCoins"
+      },
+      {
+       "nombre": "inicio",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cancelacion",
+       "tipo": "LocalDateTime"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Strategy · Estrategia concreta",
+   "documentacion": "100 % con anticipacion >= horasReintegroTotal (24), 50 % con >= horasReintegroParcial (2), si no 0 %."
+  },
+  {
+   "nombre": "PoliticaEstricta",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "horasReintegroParcial",
+     "tipo": "int"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "calcularReintegro",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "pagado",
+       "tipo": "SkillCoins"
+      },
+      {
+       "nombre": "inicio",
+       "tipo": "LocalDateTime"
+      },
+      {
+       "nombre": "cancelacion",
+       "tipo": "LocalDateTime"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Strategy · Estrategia concreta",
+   "documentacion": "Nunca devuelve el 100 %: 50 % con anticipacion >= horasReintegroParcial (72), si no 0 %."
+  },
+  {
+   "nombre": "ICalculoPrecio",
+   "paquete": "Domain",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "calcularPrecio",
+     "retorno": "SkillCoins",
+     "parametros": []
+    },
+    {
+     "nombre": "getDescripcion",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "documentacion": "Decorator: rol Componente."
+  },
+  {
+   "nombre": "PromocionDecorator",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "envuelto",
+     "tipo": "ICalculoPrecio"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "calcularPrecio",
+     "retorno": "SkillCoins",
+     "parametros": []
+    },
+    {
+     "nombre": "getDescripcion",
+     "retorno": "String",
+     "parametros": []
+    },
+    {
+     "nombre": "aplicar",
+     "retorno": "SkillCoins",
+     "parametros": [
+      {
+       "nombre": "precio",
+       "tipo": "SkillCoins"
+      }
+     ],
+     "abstracta": true
+    }
+   ],
+   "abstracta": true,
+   "estereotipo": "Decorator · Decorador",
+   "documentacion": "calcularPrecio() = aplicar(envuelto.calcularPrecio()). Como SkillCoins nunca es negativo, ninguna combinacion de promociones produce un total negativo."
+  },
+  {
+   "nombre": "Promocion",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "id",
+     "tipo": "Long"
+    },
+    {
+     "nombre": "codigo",
+     "tipo": "String"
+    },
+    {
+     "nombre": "vigenteDesde",
+     "tipo": "LocalDate"
+    },
+    {
+     "nombre": "vigenteHasta",
+     "tipo": "LocalDate"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "estaVigente",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "fecha",
+       "tipo": "LocalDate"
+      }
+     ]
+    },
+    {
+     "nombre": "decorar",
+     "retorno": "ICalculoPrecio",
+     "parametros": [
+      {
+       "nombre": "precio",
+       "tipo": "ICalculoPrecio"
+      }
+     ],
+     "abstracta": true
+    }
+   ],
+   "abstracta": true,
+   "estereotipo": "Creator",
+   "documentacion": "Definicion persistida de la promocion. Cada subclase crea su decorador porque tiene los datos para inicializarlo (Creator); los decoradores no se persisten."
+  },
+  {
+   "nombre": "PromocionPorcentual",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "porcentaje",
+     "tipo": "int"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "decorar",
+     "retorno": "ICalculoPrecio",
+     "parametros": [
+      {
+       "nombre": "precio",
+       "tipo": "ICalculoPrecio"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nombre": "PromocionMontoFijo",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "monto",
+     "tipo": "SkillCoins"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "decorar",
+     "retorno": "ICalculoPrecio",
+     "parametros": [
+      {
+       "nombre": "precio",
+       "tipo": "ICalculoPrecio"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nombre": "IEstrategiaRecomendacion",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "recomendar",
+     "retorno": "List<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "perfil",
+       "tipo": "Perfil"
+      },
+      {
+       "nombre": "candidatas",
+       "tipo": "List<Publicacion>"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Strategy: rol Estrategia. Se elige en el composition root; el caso de uso no cambia."
+  },
+  {
+   "nombre": "AfinidadPorHabilidades",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "recomendar",
+     "retorno": "List<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "perfil",
+       "tipo": "Perfil"
+      },
+      {
+       "nombre": "candidatas",
+       "tipo": "List<Publicacion>"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Strategy · Estrategia concreta",
+   "documentacion": "Puntua cada publicacion por coincidencia entre sus habilidades y los intereses y habilidades del perfil."
+  },
+  {
+   "nombre": "PopularidadReciente",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "diasVentana",
+     "tipo": "int"
+    },
+    {
+     "nombre": "contratacionRepository",
+     "tipo": "IContratacionRepository"
+    },
+    {
+     "nombre": "reloj",
+     "tipo": "Clock"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "recomendar",
+     "retorno": "List<Publicacion>",
+     "parametros": [
+      {
+       "nombre": "perfil",
+       "tipo": "Perfil"
+      },
+      {
+       "nombre": "candidatas",
+       "tipo": "List<Publicacion>"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Strategy · Estrategia concreta",
+   "documentacion": "Ordena por cantidad de contrataciones en los ultimos diasVentana dias (default 30)."
+  },
+  {
+   "nombre": "IEventoObserver",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "actualizar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "evento",
+       "tipo": "EventoContratacion"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Observer: rol Observador."
+  },
+  {
+   "nombre": "IPublicadorEventos",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "suscribir",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "observer",
+       "tipo": "IEventoObserver"
+      }
+     ]
+    },
+    {
+     "nombre": "desuscribir",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "observer",
+       "tipo": "IEventoObserver"
+      }
+     ]
+    },
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "evento",
+       "tipo": "EventoContratacion"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Observer: rol Sujeto (Observable)."
+  },
+  {
+   "nombre": "PublicadorEventos",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "observers",
+     "tipo": "List<IEventoObserver>"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "suscribir",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "observer",
+       "tipo": "IEventoObserver"
+      }
+     ]
+    },
+    {
+     "nombre": "desuscribir",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "observer",
+       "tipo": "IEventoObserver"
+      }
+     ]
+    },
+    {
+     "nombre": "publicar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "evento",
+       "tipo": "EventoContratacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Observer · Sujeto concreto"
+  },
+  {
+   "nombre": "NotificacionObserver",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "perfilRepository",
+     "tipo": "IPerfilRepository"
+    },
+    {
+     "nombre": "canalFactory",
+     "tipo": "ICanalNotificacionFactory"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "actualizar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "evento",
+       "tipo": "EventoContratacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Observer · Observador concreto",
+   "documentacion": "Por cada destinatario del evento arma la Notificacion y la envia por cada canal que el usuario eligio (email, push y/o interna)."
+  },
+  {
+   "nombre": "ReputacionObserver",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "perfilRepository",
+     "tipo": "IPerfilRepository"
+    },
+    {
+     "nombre": "calificacionRepository",
+     "tipo": "ICalificacionRepository"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "actualizar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "evento",
+       "tipo": "EventoContratacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Observer · Observador concreto",
+   "documentacion": "Ante CALIFICACION_REGISTRADA recalcula la reputacion del calificado."
+  },
+  {
+   "nombre": "ICanalNotificacion",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "enviar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "notificacion",
+       "tipo": "Notificacion"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Target de los adapters de email y push, y contrato del canal interno."
+  },
+  {
+   "nombre": "EmailAdapter",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "cliente",
+     "tipo": "EmailClientMock"
+    },
+    {
+     "nombre": "identidad",
+     "tipo": "IServicioIdentidad"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "enviar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "notificacion",
+       "tipo": "Notificacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Adapter · Adapter"
+  },
+  {
+   "nombre": "PushAdapter",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "cliente",
+     "tipo": "PushClientMock"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "enviar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "notificacion",
+       "tipo": "Notificacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Adapter · Adapter"
+  },
+  {
+   "nombre": "CanalInterno",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "notificacionRepository",
+     "tipo": "INotificacionRepository"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "enviar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "notificacion",
+       "tipo": "Notificacion"
+      }
+     ]
+    }
+   ],
+   "documentacion": "No adapta a nadie: guarda la Notificacion en la bandeja interna."
+  },
+  {
+   "nombre": "CanalNotificacionFactory",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "emailClient",
+     "tipo": "EmailClientMock"
+    },
+    {
+     "nombre": "pushClient",
+     "tipo": "PushClientMock"
+    },
+    {
+     "nombre": "identidad",
+     "tipo": "IServicioIdentidad"
+    },
+    {
+     "nombre": "notificacionRepository",
+     "tipo": "INotificacionRepository"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "crear",
+     "retorno": "ICanalNotificacion",
+     "parametros": [
+      {
+       "nombre": "canal",
+       "tipo": "CanalNotificacion"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Simple Factory",
+   "documentacion": "Un unico switch sobre CanalNotificacion: agregar un canal toca solo esta clase y el adapter nuevo."
+  },
+  {
+   "nombre": "IServicioIdentidad",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "validarUsuario",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "obtenerEmail",
+     "retorno": "String",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Target del Adapter de identidad externa."
+  },
+  {
+   "nombre": "IdentidadAdapter",
+   "paquete": "Infrastructure",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "cliente",
+     "tipo": "IdentityClientMock"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "validarUsuario",
+     "retorno": "boolean",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "obtenerEmail",
+     "retorno": "String",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Adapter · Adapter"
+  },
+  {
+   "nombre": "IContratacionService",
+   "paquete": "Application",
+   "tipo": "interface",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "solicitar",
+     "retorno": "Long",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "SolicitarCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "franjaId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "long",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "listar",
+     "retorno": "Pagina<ContratacionDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "verComprobante",
+     "retorno": "ContratacionDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "documentacion": "Puerto de entrada: casos de uso de Contratacion."
+  },
+  {
+   "nombre": "ContratacionService",
+   "paquete": "Application",
+   "tipo": "clase",
+   "atributos": [
+    {
+     "nombre": "contratacionRepository",
+     "tipo": "IContratacionRepository"
+    },
+    {
+     "nombre": "publicacionRepository",
+     "tipo": "IPublicacionRepository"
+    },
+    {
+     "nombre": "perfilRepository",
+     "tipo": "IPerfilRepository"
+    },
+    {
+     "nombre": "billeteraRepository",
+     "tipo": "IBilleteraRepository"
+    },
+    {
+     "nombre": "transacciones",
+     "tipo": "IGestorTransacciones"
+    },
+    {
+     "nombre": "eventos",
+     "tipo": "IPublicadorEventos"
+    },
+    {
+     "nombre": "reloj",
+     "tipo": "Clock"
+    }
+   ],
+   "operaciones": [
+    {
+     "nombre": "solicitar",
+     "retorno": "Long",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "cmd",
+       "tipo": "SolicitarCommand"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "rechazar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "pagar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "proponerReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "franjaId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "aceptarReprogramacion",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "iniciar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "completar",
+     "retorno": "void",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    },
+    {
+     "nombre": "cancelar",
+     "retorno": "long",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      },
+      {
+       "nombre": "motivo",
+       "tipo": "String"
+      }
+     ]
+    },
+    {
+     "nombre": "listar",
+     "retorno": "Pagina<ContratacionDto>",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "pagina",
+       "tipo": "int"
+      },
+      {
+       "nombre": "tamanio",
+       "tipo": "int"
+      }
+     ]
+    },
+    {
+     "nombre": "verComprobante",
+     "retorno": "ContratacionDto",
+     "parametros": [
+      {
+       "nombre": "userId",
+       "tipo": "String"
+      },
+      {
+       "nombre": "contratacionId",
+       "tipo": "Long"
+      }
+     ]
+    }
+   ],
+   "estereotipo": "Pure Fabrication",
+   "documentacion": "Caso de uso: busca en los puertos, delega las reglas en el dominio y define el limite transaccional."
+  },
+  {
+   "nombre": "EstadoPublicacionFinal",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "State · Estado concreto (final)",
+   "documentacion": "Agrupa en el diagrama: Cerrada, PublicacionCancelada. Solo informan su nombre; no permiten ninguna accion."
+  },
+  {
+   "nombre": "EstadoContratacionFinal",
+   "paquete": "Domain",
+   "tipo": "clase",
+   "atributos": [],
+   "operaciones": [
+    {
+     "nombre": "getNombre",
+     "retorno": "String",
+     "parametros": []
+    }
+   ],
+   "estereotipo": "State · Estado concreto (final)",
+   "documentacion": "Agrupa en el diagrama: Rechazada, ContratacionCancelada. Solo informan su nombre; no permiten ninguna accion."
+  }
+ ],
+ "relaciones": [
+  {
+   "tipo": "realizacion",
+   "origen": "ContratacionService",
+   "destino": "IContratacionService"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "ContratacionService",
+   "destino": "IPublicadorEventos",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "publica en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PublicadorEventos",
+   "destino": "IPublicadorEventos"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "NotificacionObserver",
+   "destino": "IEventoObserver"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "ReputacionObserver",
+   "destino": "IEventoObserver"
+  },
+  {
+   "tipo": "agregacion",
+   "todo": "PublicadorEventos",
+   "parte": "IEventoObserver",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "notifica a"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "NotificacionObserver",
+   "destino": "ICanalNotificacion",
+   "nombre": "envia por"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "AfinidadPorHabilidades",
+   "destino": "IEstrategiaRecomendacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PopularidadReciente",
+   "destino": "IEstrategiaRecomendacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "IdentidadAdapter",
+   "destino": "IServicioIdentidad"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EmailAdapter",
+   "destino": "ICanalNotificacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PushAdapter",
+   "destino": "ICanalNotificacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "CanalInterno",
+   "destino": "ICanalNotificacion"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "EmailAdapter",
+   "destino": "IServicioIdentidad",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "obtiene email de",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "CanalNotificacionFactory",
+   "destino": "EmailAdapter",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "CanalNotificacionFactory",
+   "destino": "PushAdapter",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "CanalNotificacionFactory",
+   "destino": "CanalInterno",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "agregacion",
+   "todo": "Perfil",
+   "parte": "Habilidad",
+   "mult_todo": "0..*",
+   "mult_parte": "0..*",
+   "nombre": "domina"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Perfil",
+   "destino": "Habilidad",
+   "mult_origen": "0..*",
+   "mult_destino": "0..*",
+   "nombre": "le interesa",
+   "rol_destino": "intereses"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Perfil",
+   "destino": "Calificacion",
+   "nombre": "recalcula con"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "Categoria",
+   "destino": "ElementoCatalogo"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "Habilidad",
+   "destino": "ElementoCatalogo"
+  },
+  {
+   "tipo": "agregacion",
+   "todo": "Categoria",
+   "parte": "ElementoCatalogo",
+   "mult_todo": "0..1",
+   "mult_parte": "0..*",
+   "nombre": "agrupa"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "Perfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "publicada por",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "Categoria",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "clasificada en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "Habilidad",
+   "mult_origen": "0..*",
+   "mult_destino": "0..*",
+   "nombre": "trabaja",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Publicacion",
+   "parte": "FranjaHoraria",
+   "mult_todo": "1",
+   "mult_parte": "1..*",
+   "nombre": "ofrece"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Publicacion",
+   "parte": "CambioEstado",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "registra"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "PoliticaCancelacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "aplica",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Publicacion",
+   "parte": "Promocion",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "incluye"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Publicacion",
+   "destino": "EstadoPublicacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "se encuentra en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoBorrador",
+   "destino": "EstadoPublicacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoPublicada",
+   "destino": "EstadoPublicacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoPausada",
+   "destino": "EstadoPublicacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoPublicacionFinal",
+   "destino": "EstadoPublicacion"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "PoliticaFlexible",
+   "destino": "PoliticaCancelacion"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "PoliticaEstricta",
+   "destino": "PoliticaCancelacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "Publicacion",
+   "destino": "ICalculoPrecio"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "PromocionDecorator",
+   "destino": "ICalculoPrecio"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PromocionDecorator",
+   "destino": "ICalculoPrecio",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "envuelve",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "herencia",
+   "origen": "PromocionPorcentual",
+   "destino": "Promocion"
+  },
+  {
+   "tipo": "herencia",
+   "origen": "PromocionMontoFijo",
+   "destino": "Promocion"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Contratacion",
+   "destino": "Publicacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "contrata",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Contratacion",
+   "destino": "Perfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "solicitada por",
+   "rol_destino": "cliente"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Contratacion",
+   "destino": "Perfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "prestada por",
+   "rol_destino": "proveedor"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Contratacion",
+   "destino": "FranjaHoraria",
+   "mult_origen": "0..1",
+   "mult_destino": "1",
+   "nombre": "reserva",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Contratacion",
+   "parte": "PropuestaReprogramacion",
+   "mult_todo": "1",
+   "mult_parte": "0..1",
+   "nombre": "tiene pendiente"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "PropuestaReprogramacion",
+   "destino": "FranjaHoraria",
+   "mult_origen": "0..1",
+   "mult_destino": "1",
+   "nombre": "propone",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Contratacion",
+   "parte": "CambioEstado",
+   "mult_todo": "1",
+   "mult_parte": "1..*",
+   "nombre": "registra"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Contratacion",
+   "destino": "EstadoContratacion",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "se encuentra en",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Contratacion",
+   "destino": "Calificacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "Contratacion",
+   "destino": "Billetera",
+   "nombre": "debita y acredita"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoPendiente",
+   "destino": "EstadoContratacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoAceptada",
+   "destino": "EstadoContratacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoConfirmada",
+   "destino": "EstadoContratacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoEnCurso",
+   "destino": "EstadoContratacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoCompletada",
+   "destino": "EstadoContratacion"
+  },
+  {
+   "tipo": "realizacion",
+   "origen": "EstadoContratacionFinal",
+   "destino": "EstadoContratacion"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Billetera",
+   "destino": "Perfil",
+   "mult_origen": "0..1",
+   "mult_destino": "1",
+   "nombre": "pertenece a",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Billetera",
+   "parte": "MovimientoCredito",
+   "mult_todo": "1",
+   "mult_parte": "0..*",
+   "nombre": "registra"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Calificacion",
+   "destino": "Contratacion",
+   "mult_origen": "0..2",
+   "mult_destino": "1",
+   "nombre": "califica",
+   "rol_destino": ""
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Calificacion",
+   "destino": "Perfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "escrita por",
+   "rol_destino": "autor"
+  },
+  {
+   "tipo": "asociacion",
+   "origen": "Calificacion",
+   "destino": "Perfil",
+   "mult_origen": "0..*",
+   "mult_destino": "1",
+   "nombre": "dirigida a",
+   "rol_destino": "calificado"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "EventoContratacion",
+   "destino": "Contratacion",
+   "nombre": "se crea desde"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "NotificacionObserver",
+   "destino": "Notificacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Publicacion",
+   "parte": "SkillCoins",
+   "mult_todo": "1",
+   "mult_parte": "1",
+   "nombre": "precio base"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Contratacion",
+   "parte": "SkillCoins",
+   "mult_todo": "1",
+   "mult_parte": "1",
+   "nombre": "precio acordado"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "Billetera",
+   "parte": "SkillCoins",
+   "mult_todo": "1",
+   "mult_parte": "1",
+   "nombre": "saldo"
+  },
+  {
+   "tipo": "composicion",
+   "todo": "MovimientoCredito",
+   "parte": "SkillCoins",
+   "mult_todo": "1",
+   "mult_parte": "1",
+   "nombre": "monto"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ContratacionService",
+   "destino": "EventoContratacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "ContratacionService",
+   "destino": "Contratacion",
+   "nombre": "crea"
+  },
+  {
+   "tipo": "dependencia",
+   "origen": "IEventoObserver",
+   "destino": "EventoContratacion",
+   "nombre": "recibe"
+  }
+ ],
+ "diagramas": [
+  {
+   "nombre": "Patron State - Publicacion",
+   "clases": [
+    "Publicacion",
+    "EstadoPublicacion",
+    "EstadoBorrador",
+    "EstadoPublicada",
+    "EstadoPausada",
+    "EstadoPublicacionFinal"
+   ]
+  },
+  {
+   "nombre": "Patron State - Contratacion",
+   "clases": [
+    "Contratacion",
+    "EstadoContratacion",
+    "EstadoPendiente",
+    "EstadoAceptada",
+    "EstadoConfirmada",
+    "EstadoEnCurso",
+    "EstadoCompletada",
+    "EstadoContratacionFinal"
+   ]
+  }
+ ]
+}
